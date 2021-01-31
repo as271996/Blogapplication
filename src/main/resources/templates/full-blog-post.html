@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Blog Posts</title>
+</head>
+<body>
+<div class="container" style="width: 100%;">
+    <h3 style="text-align: center" th:text="${post.title}" />
+    <hr>
+    <div class="mx-auto" style="width: 800px;">
+        <p th:text="${post.content}" />
+        <p th:text="'by ' + ${post.author} + ', ' + ${post.publishedAt} + ', Tags:'" />
+
+        <!-- Add update button/link -->
+        <a th:href="@{/blog/showFormForUpdate(postId=${post.id})}">
+            Update
+        </a>
+
+        <!-- Add delete button/link -->
+        <a th:href="@{/blog/delete(postId=${post.id})}"
+           onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false">
+            Delete
+        </a>
+        <!-- Add comment button -->
+    </div>
+    <hr>
+    <!-- Add table for comments -->
+
+</div>
+</body>
+</html>

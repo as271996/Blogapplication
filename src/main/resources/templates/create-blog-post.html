@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <title>Save Employee</title>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h3 style="text-align: center">Your Blog</h3>
+    <hr>
+
+    <p class="h4 mb-4">Save Your Blog</p>
+
+    <form action="#" th:action="@{/blog/save}"
+          th:object="${posts}" method="POST">
+
+        <!-- Add hidden form field to handle update -->
+        <input type="hidden" th:field="*{id}" />
+
+        <input type="text" th:field="*{title}"
+               class="form-control mb-4 col-4" placeholder="Your blog title">
+
+        <textarea th:field="*{content}"
+                  class="form-control mb-4 col-4" placeholder="Write your blog..."  />
+
+        <input type="text" th:field="*{author}"
+               class="form-control mb-4 col-4" placeholder="Your Full Name">
+
+        <!--<input type="text" th:field="*{publishedAt}"
+               class="form-control mb-4 col-4" placeholder="yyyy-mm-dd hh:mm:ss.mms">
+-->
+        <button type="submit" class="btn btn-info col-2">Save</button>
+
+    </form>
+
+    <hr>
+    <a th:href="@{/blog/bloglist}">Back to Blog Posts</a>
+
+</div>
+</body>
+
+</html>
+
+
+
+
+
+
+

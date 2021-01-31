@@ -17,7 +17,10 @@
     <hr>
     <div class="d-flex flex-row bd-highlight mb-3">
         <div class="mx-auto" style="width: auto;">
-            <button class="btn btn-outline-success" type="submit">Create New Blog</button>
+            <!-- Add 'create new blog' button -->
+            <a th:href="@{/blog/showFormForCreateBlog}" class="btn btn-outline-success">
+                Create New Blog
+            </a>
             <hr>
             <p><b>Filter by</b></p>
             <div class="form-check">
@@ -60,28 +63,26 @@
             </div>
             <br>
             <table class="table">
-                <tr th:each="tempPosts : ${postList}">
+                <tr th:each="tempPosts : ${blogList}">
                     <td>
                         <!-- Add title-->
-                        <a href="#"><h5 th:text="${tempPosts.title}" /></a>
+                        <a th:href="@{/blog/showFullBlogPost(postId=${tempPosts.id})}">
+                            <h5 th:text="${tempPosts.title}" />
+                        </a>
                         <p th:text="'by ' + ${tempPosts.author} + ', ' + ${tempPosts.publishedAt} + ', Tags:'" />
                         <p th:text="${tempPosts.excerpt}" />
+
                         <!-- Add update button/link -->
-                        <a th:href="@{/blog/showFormForUpdate(employeeId=${tempPosts.id})}"
-                           class="btn btn-info btn-sm">
+                        <a th:href="@{/blog/showFormForUpdate(postId=${tempPosts.id})}">
                             Update
                         </a>
+
                         <!-- Add delete button/link -->
-                        <a th:href="@{/blog/delete(employeeId=${tempPosts.id})}"
-                           class="btn btn-danger btn-sm"
+                        <a th:href="@{/blog/delete(postId=${tempPosts.id})}"
                            onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false">
                             Delete
                         </a>
                         <!-- Add comment button -->
-                        <a th:href="@{/blog/showFormForAdd}"
-                           class="btn btn-primary btn-sm mb-3">
-                            Comment
-                        </a>
                     </td>
                 </tr>
             </table>
