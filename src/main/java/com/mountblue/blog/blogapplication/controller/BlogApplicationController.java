@@ -1,5 +1,6 @@
 package com.mountblue.blog.blogapplication.controller;
 
+import com.mountblue.blog.blogapplication.entity.Comments;
 import com.mountblue.blog.blogapplication.entity.Posts;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,6 @@ public class BlogApplicationController {
     // Add mapping for /showFullBlogPost
     @GetMapping("/showFullBlogPost")
     public String showFullBlogPost(@RequestParam("postId") int theId, Model theModel){
-        System.out.println(theId);
         Posts thePost = thePostsService.findById(theId);
         theModel.addAttribute("post", thePost);
         return "full-blog-post";
@@ -72,6 +72,29 @@ public class BlogApplicationController {
     public String delete(@RequestParam("postId") int theId, Model theModel){
         thePostsService.deleteById(theId);
         return "redirect:/blog/bloglist";
+    }
+
+    // Add mapping for /showFormForComment
+    @GetMapping("/showFormForComment")
+    public String showFormForComment(@RequestParam("postId") int theId, Model theModel){
+        System.out.println("post-id 1 : " + theId);
+        Comments theComments = new Comments();
+        theModel.addAttribute("postId", theId);
+        theModel.addAttribute("comments", theComments);
+        return "comment-form.html";
+    }
+
+    // Add mapping for /saveComment
+    @PostMapping("/saveComment")
+    public String saveComment(@ModelAttribute("comments") Comments theComments){
+        //System.out.println("post-id 2 :" + theComments.getPostId());
+        Posts thePosts = thePostsService.findById(6);
+        //theComments.setPostId(theComments.getPostId());
+        theComments.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        theComments.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        thePosts.add(theComments);
+        thePostsService.save(thePosts);
+        return "redirect:/blog/showFullBlogPost";
     }
 }
 

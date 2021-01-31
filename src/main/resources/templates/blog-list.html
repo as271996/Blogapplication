@@ -82,7 +82,12 @@
                            onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false">
                             Delete
                         </a>
+
                         <!-- Add comment button -->
+                        <a th:href="@{/blog/showFormForComment(postId=${tempPosts.id})}">
+                            Comment
+                        </a>
+
                     </td>
                 </tr>
             </table>

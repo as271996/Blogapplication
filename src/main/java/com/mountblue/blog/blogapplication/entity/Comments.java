@@ -21,9 +21,6 @@ public class Comments {
     @Column(name = "comment")
     private String comment;
 
-    @Column(name = "post_id")
-    private int postId;
-
     @Column(name = "created_at")
     private Timestamp createdAt;
 
@@ -33,11 +30,10 @@ public class Comments {
     public Comments() {
     }
 
-    public Comments(String name, String email, String comment, int postId, Timestamp createdAt, Timestamp updatedAt) {
+    public Comments(String name, String email, String comment, Timestamp createdAt, Timestamp updatedAt) {
         this.name = name;
         this.email = email;
         this.comment = comment;
-        this.postId = postId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -74,14 +70,6 @@ public class Comments {
         this.comment = comment;
     }
 
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
-    }
-
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -105,7 +93,6 @@ public class Comments {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", comment='" + comment + '\'' +
-                ", postId=" + postId +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

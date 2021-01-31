@@ -2,6 +2,8 @@ package com.mountblue.blog.blogapplication.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -35,6 +37,10 @@ public class Posts {
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+    @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    @JoinColumn(name="post_id")
+    private List<Comments> commentsList;
 
     public Posts() {
     }
@@ -120,6 +126,21 @@ public class Posts {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Comments> getCommentsList() {
+        return commentsList;
+    }
+
+    public void setCommentsList(List<Comments> commentsList) {
+        this.commentsList = commentsList;
+    }
+
+    public void add(Comments teamComments) {
+        if(teamComments != null) {
+            commentsList = new ArrayList<>();
+        }
+        commentsList.add(teamComments);
     }
 
     @Override
