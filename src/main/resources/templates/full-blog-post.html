@@ -16,7 +16,15 @@
     <hr>
     <div class="mx-auto" style="width: 800px;">
         <p th:text="${post.content}" />
-        <p th:text="'by ' + ${post.author} + ', ' + ${post.publishedAt} + ', Tags:'" />
+        <p th:text="'by ' + ${post.author} + ', ' + ${post.publishedAt}" />
+        <div th:if="${post.tagsList != null}">
+            <b>Tags</b>
+            <ul>
+                <th:block th:object="${post}">
+                    <li th:each="tags : *{tagsList}" th:text="${tags.name}" />
+                </th:block>
+            </ul>
+        </div>
 
         <!-- Add update button/link -->
         <a th:href="@{/blog/showFormForUpdate(postId=${post.id})}">
@@ -41,7 +49,7 @@
     <br>
     <table class="table">
         <tr th:each="tempComments : ${post.commentsList}">
-            <p th:text="'by ' + ${tempComments.name} + ', ' + ${tempComments.updatedAt} + 'Tag:'" />
+            <p th:text="'by ' + ${tempComments.name} + ', ' + ${tempComments.updatedAt}" />
             <p th:text="${tempComments.comment}"/>
             <!-- Add update button/link -->
             <a th:href="@{/blog/showFormForUpdateComment(commentId=${tempComments.id})}">
