@@ -80,12 +80,27 @@ public class BlogApplicationController {
     // Add mapping for /showFormForComment
     @GetMapping("/showFormForComment")
     public String showFormForComment(@RequestParam("postId") int theId, Model theModel){
-        System.out.println("post-id 1 : " + theId);
-        //Posts thePosts = thePostsService.findById(theId);
         Comments theComments = new Comments();
         theComments.setPostId(theId);
         theModel.addAttribute("comments", theComments);
         return "comment-form";
+    }
+
+    // Add mapping for /showFormForUpdateComment
+    @GetMapping("/showFormForUpdateComment")
+    public String showFormForUpdateComment(@RequestParam("commentId") int theId, Model theModel){
+        Comments theComments = theCommentsService.findById(theId);
+        theModel.addAttribute("comments", theComments);
+        return "comment-form";
+
+    }
+
+    // Add mapping for /deleteComment
+    @GetMapping("/deleteComment")
+    public String deleteComment(@RequestParam("commentId") int theId, Model theModel){
+        int postId = theCommentsService.findById(theId).getPostId();
+        theCommentsService.deleteById(theId);
+        return "redirect:/blog/showFullBlogPost?postId=" + postId;
     }
 
     // Add mapping for /saveComment
@@ -97,7 +112,6 @@ public class BlogApplicationController {
         theComments.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         thePosts.add(theComments);
         thePostsService.save(thePosts);
-        //return new M
         return "redirect:/blog/showFullBlogPost?postId=" + theId;
     }
 }
