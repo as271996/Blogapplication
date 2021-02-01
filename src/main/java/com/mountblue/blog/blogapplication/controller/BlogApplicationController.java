@@ -2,12 +2,15 @@ package com.mountblue.blog.blogapplication.controller;
 
 import com.mountblue.blog.blogapplication.entity.Comments;
 import com.mountblue.blog.blogapplication.entity.Posts;
+import com.mountblue.blog.blogapplication.entity.Tags;
 import com.mountblue.blog.blogapplication.service.CommentsService;
 import com.mountblue.blog.blogapplication.service.PostsService;
+import com.mountblue.blog.blogapplication.service.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -18,17 +21,19 @@ public class BlogApplicationController {
 
     private PostsService thePostsService;
     private CommentsService theCommentsService;
+    private TagsService theTagsService;
 
     @Autowired
-    public BlogApplicationController(PostsService thePostsService, CommentsService theCommentsService) {
+    public BlogApplicationController(PostsService thePostsService, CommentsService theCommentsService,
+                                     TagsService theTagsService) {
         this.thePostsService = thePostsService;
         this.theCommentsService = theCommentsService;
+        this.theTagsService = theTagsService;
     }
 
     // Add mapping for /bloglist
     @GetMapping("/bloglist")
     public String blogList(Model theModel){
-
         List<Posts> thePostList = thePostsService.findAll();
         theModel.addAttribute("blogList", thePostList);
         return "blog-list";
@@ -36,10 +41,13 @@ public class BlogApplicationController {
 
     // Add mapping for /showFormForCreateBlog
     @GetMapping("/showFormForCreateBlog")
-    public String showFormForCreateBlog(Model theModel){
-        Posts thePosts = new Posts();
-        theModel.addAttribute("posts", thePosts);
-        return "create-blog-post";
+    public ModelAndView showFormForCreateBlog(Model theModel){
+
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("create-blog-post.html");
+        mav.addObject("posts",new Posts());
+        mav.addObject("allTaglist", theTagsService.findAll());
+        return mav;
     }
 
     // Add mapping for /showFullBlogPost
@@ -53,8 +61,9 @@ public class BlogApplicationController {
     // Add mapping for /showFormForUpdate
     @GetMapping("/showFormForUpdate")
     public String showFormForUpdate(@RequestParam("postId") int theId, Model theModel){
-        Posts thePost = thePostsService.findById(theId);
-        theModel.addAttribute("posts", thePost);
+        Posts thePosts = thePostsService.findById(theId);
+        theModel.addAttribute("allTaglist", theTagsService.findAll());
+        theModel.addAttribute("posts", thePosts);
         return "create-blog-post";
     }
 
@@ -67,6 +76,7 @@ public class BlogApplicationController {
         thePosts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         thePosts.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         thePostsService.save(thePosts);
+        System.out.println(thePosts.getTagsList());
         return "redirect:/blog/bloglist";
     }
 

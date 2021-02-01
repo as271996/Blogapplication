@@ -36,9 +36,11 @@
         <input type="text" th:field="*{author}"
                class="form-control mb-4 col-4" placeholder="Your Full Name">
 
-        <!--<input type="text" th:field="*{publishedAt}"
-               class="form-control mb-4 col-4" placeholder="yyyy-mm-dd hh:mm:ss.mms">
--->
+        <select th:field="*{tagsList}" multiple="multiple" class="form-control mb-4 col-4">
+            <option th:each="tag : ${allTaglist}" th:value="${tag.id}" th:text="${tag.name}" />
+        </select>
+
+        <!-- Add publish date input -->
         <button type="submit" class="btn btn-info col-2">Save</button>
 
     </form>

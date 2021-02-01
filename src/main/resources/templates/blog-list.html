@@ -69,7 +69,7 @@
                         <a th:href="@{/blog/showFullBlogPost(postId=${tempPosts.id})}">
                             <h5 th:text="${tempPosts.title}" />
                         </a>
-                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${tempPosts.publishedAt} + ', Tags:'" />
+                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${tempPosts.publishedAt} + ', Tags: ' + ${tempPosts.tagsList} " />
                         <p th:text="${tempPosts.excerpt}" />
 
                         <!-- Add update button/link -->

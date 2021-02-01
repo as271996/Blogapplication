@@ -5,8 +5,8 @@ import java.util.List;
 
 public interface TagsService {
 
-    List<Tags> findAll();
-    Tags findById(int theId);
-    void save(Tags theTags);
-    void deleteById(int theId);
+    public List<Tags> findAll();
+    public Tags findById(int theId);
+    public void save(Tags theTags);
+    public void deleteById(int theId);
 }

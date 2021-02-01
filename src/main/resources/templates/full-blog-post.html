@@ -41,7 +41,7 @@
     <br>
     <table class="table">
         <tr th:each="tempComments : ${post.commentsList}">
-            <p th:text="'by ' + ${tempComments.name} + ', ' + ${tempComments.updatedAt}" />
+            <p th:text="'by ' + ${tempComments.name} + ', ' + ${tempComments.updatedAt} + 'Tag:'" />
             <p th:text="${tempComments.comment}"/>
             <!-- Add update button/link -->
             <a th:href="@{/blog/showFormForUpdateComment(commentId=${tempComments.id})}">

@@ -2,6 +2,8 @@ package com.mountblue.blog.blogapplication.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tags")
@@ -20,6 +22,16 @@ public class Tags {
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+    @ManyToMany(fetch=FetchType.LAZY,
+            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinTable(
+            name="post_tags",
+            joinColumns=@JoinColumn(name="tag_id"),
+            inverseJoinColumns=@JoinColumn(name="post_id")
+    )
+    private List<Posts> postsList;
 
     public Tags() {
     }
@@ -60,6 +72,21 @@ public class Tags {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Posts> getPostsList() {
+        return postsList;
+    }
+
+    public void setPostsList(List<Posts> postsList) {
+        this.postsList = postsList;
+    }
+
+    public void addPosts(Posts thePosts){
+        if (postsList == null){
+            postsList = new ArrayList<>();
+        }
+        postsList.add(thePosts);
     }
 
     @Override

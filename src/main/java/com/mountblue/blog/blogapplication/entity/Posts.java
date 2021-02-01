@@ -42,6 +42,16 @@ public class Posts {
     @JoinColumn(name="post_id", nullable = false)
     private List<Comments> commentsList;
 
+    @ManyToMany(fetch=FetchType.LAZY,
+            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinTable(
+            name="post_tags",
+            joinColumns=@JoinColumn(name="post_id"),
+            inverseJoinColumns=@JoinColumn(name="tag_id")
+    )
+    private List<Tags> tagsList;
+
     public Posts() {
     }
 
@@ -136,11 +146,28 @@ public class Posts {
         this.commentsList = commentsList;
     }
 
-    public void add(Comments teamComments) {
-        if(teamComments != null) {
+    public List<Tags> getTagsList() {
+        return tagsList;
+    }
+
+    public void setTagsList(List<Tags> tagsList) {
+        this.tagsList = tagsList;
+    }
+
+    public void addTags(Tags theTags) {
+
+        if (tagsList == null) {
+            tagsList = new ArrayList<>();
+        }
+
+        tagsList.add(theTags);
+    }
+
+    public void add(Comments theComments) {
+        if(commentsList == null) {
             commentsList = new ArrayList<>();
         }
-        commentsList.add(teamComments);
+        commentsList.add(theComments);
     }
 
     @Override
