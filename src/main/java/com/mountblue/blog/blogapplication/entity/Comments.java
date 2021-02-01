@@ -21,6 +21,9 @@ public class Comments {
     @Column(name = "comment")
     private String comment;
 
+    @Column(name = "post_id", insertable = false, updatable = false)
+    private int postId;
+
     @Column(name = "created_at")
     private Timestamp createdAt;
 
@@ -60,6 +63,14 @@ public class Comments {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 
     public String getComment() {

@@ -37,7 +37,13 @@
     </div>
     <hr>
     <!-- Add table for comments -->
+    <table class="table">
+        <tr th:each="tempPosts : ${post.commentsList}">
+        </tr>
+    </table>
 
+    <hr>
+    <a th:href="@{/blog/bloglist}">Back to Blog Posts</a>
 </div>
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.mountblue.blog.blogapplication.controller;
 
 import com.mountblue.blog.blogapplication.entity.Comments;
 import com.mountblue.blog.blogapplication.entity.Posts;
+import com.mountblue.blog.blogapplication.service.CommentsService;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,12 @@ import java.util.List;
 public class BlogApplicationController {
 
     private PostsService thePostsService;
+    private CommentsService theCommentsService;
 
     @Autowired
-    public BlogApplicationController(PostsService thePostsService) {
+    public BlogApplicationController(PostsService thePostsService, CommentsService theCommentsService) {
         this.thePostsService = thePostsService;
+        this.theCommentsService = theCommentsService;
     }
 
     // Add mapping for /bloglist
@@ -78,23 +81,24 @@ public class BlogApplicationController {
     @GetMapping("/showFormForComment")
     public String showFormForComment(@RequestParam("postId") int theId, Model theModel){
         System.out.println("post-id 1 : " + theId);
+        //Posts thePosts = thePostsService.findById(theId);
         Comments theComments = new Comments();
-        theModel.addAttribute("postId", theId);
+        theComments.setPostId(theId);
         theModel.addAttribute("comments", theComments);
-        return "comment-form.html";
+        return "comment-form";
     }
 
     // Add mapping for /saveComment
     @PostMapping("/saveComment")
     public String saveComment(@ModelAttribute("comments") Comments theComments){
-        //System.out.println("post-id 2 :" + theComments.getPostId());
-        Posts thePosts = thePostsService.findById(6);
-        //theComments.setPostId(theComments.getPostId());
+        int theId = theComments.getPostId();
+        Posts thePosts = thePostsService.findById(theId);
         theComments.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         theComments.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         thePosts.add(theComments);
         thePostsService.save(thePosts);
-        return "redirect:/blog/showFullBlogPost";
+        //return new M
+        return "redirect:/blog/showFullBlogPost?postId=" + theId;
     }
 }
 

@@ -39,7 +39,7 @@ public class Posts {
     private Timestamp updatedAt;
 
     @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    @JoinColumn(name="post_id")
+    @JoinColumn(name="post_id", nullable = false)
     private List<Comments> commentsList;
 
     public Posts() {
