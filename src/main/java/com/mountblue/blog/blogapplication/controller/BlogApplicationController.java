@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -175,6 +176,26 @@ public class BlogApplicationController {
         theModel.addAttribute(theSearchPostList);
         theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", theSearchPostList);
+        return "blog-list";
+    }
+
+    // Add mapping for /sort
+    @GetMapping("/sort")
+    public String sortBy(@RequestParam("sortBy") String sortBy,
+                         @RequestParam("order") String order,
+                         @RequestParam(defaultValue = "0") int pageNo,
+                         Model theModel){
+        Pageable sortedBy;
+        if ("asc".equals(order)) {
+            sortedBy = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+        } else {
+            sortedBy = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+        }
+        Page<Posts> theSortedPostPage = thePostsService.findAll(sortedBy);
+        List<Posts> theSortedPostList = theSortedPostPage.getContent();
+        theModel.addAttribute(theSortedPostList);
+        theModel = pagingCalculation(theModel,(int) theSortedPostPage.getTotalElements(), pageNo);
+        theModel.addAttribute("blogList", theSortedPostList);
         return "blog-list";
     }
 }

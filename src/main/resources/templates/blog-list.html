@@ -10,11 +10,6 @@
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Blog Posts</title>
-    <script type="text/javascript">
-    function clearSearch() {
-        window.location = "[[@{/}]]";
-    }
-</script>
 </head>
 <body>
 
@@ -28,39 +23,31 @@
                 Create New Blog
             </a>
             <hr>
-            <p><b>Filter by</b></p>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="" value="" id="filterCheckAuthor">
-                <label class="form-check-label" for="filterCheckAuthor">
-                    Author
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="" value="" id="filterCheckDateTime">
-                <label class="form-check-label" for="filterCheckDateTime">
-                    Published DateTime
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="" value="" id="filterCheckTags">
-                <label class="form-check-label" for="filterCheckTags">
-                    Tags
-                </label>
-            </div>
-            <hr>
             <p><b>Sort by</b></p>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="sortRadio" value="" id="sortRadioAuthor">
-                <label class="form-check-label" for="sortRadioAuthor">
-                    Author
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" value="" name="sortRadio" id="sortRadioDateTime">
-                <label class="form-check-label" for="sortRadioDateTime">
-                    Published DateTime
-                </label>
-            </div>
+            <form th:action="@{/blog/sort}">
+                <div class="form-group">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="author" name="sortBy" class="custom-control-input" value="author"/>
+                        <label class="custom-control-label"for="author">Author</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="publishedAt" name="sortBy" class="custom-control-input" value="publishedAt" />
+                        <label class="custom-control-label" for="publishedAt">Published DateTime</label>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="asc" name="order" class="custom-control-input" value="asc"/>
+                        <label class="custom-control-label"for="asc">Asc</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="dsc" name="order" class="custom-control-input" value="dsc">
+                        <label class="custom-control-label" for="dsc">Dsc</label>
+                    </div>
+                </div>
+                <button class="btn btn-outline-success" type="submit">Sort</button>
+            </form>
         </div>
         <div class="mx-auto" style="width: 800px;">
 

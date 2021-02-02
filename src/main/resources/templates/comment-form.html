@@ -15,11 +15,8 @@
 <body>
 
 <div class="container">
-
-    <h3 style="text-align: center">Your Comment</h3>
-    <hr>
-
-    <p class="h4 mb-4">Save Your Comment</p>
+    <br><br>
+    <p class="h4 mb-4">Leave a comment</p>
 
     <form action="#" th:action="@{/blog/saveComment}"
           th:object="${comments}" method="POST">
@@ -37,7 +34,7 @@
         <textarea th:field="*{comment}"
                   class="form-control mb-4 col-4" placeholder="Write your comments..."  />
 
-        <button type="submit" class="btn btn-info col-2">Comment</button>
+        <button type="submit" class="btn btn-info col-2">Submit</button>
 
     </form>
 
