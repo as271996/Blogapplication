@@ -2,11 +2,12 @@ package com.mountblue.blog.blogapplication.controller;
 
 import com.mountblue.blog.blogapplication.entity.Comments;
 import com.mountblue.blog.blogapplication.entity.Posts;
-import com.mountblue.blog.blogapplication.entity.Tags;
 import com.mountblue.blog.blogapplication.service.CommentsService;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import com.mountblue.blog.blogapplication.service.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ public class BlogApplicationController {
     private CommentsService theCommentsService;
     private TagsService theTagsService;
 
+    private static final int pageSize = 10;
+
     @Autowired
     public BlogApplicationController(PostsService thePostsService, CommentsService theCommentsService,
                                      TagsService theTagsService) {
@@ -33,10 +36,44 @@ public class BlogApplicationController {
 
     // Add mapping for /bloglist
     @GetMapping("/bloglist")
-    public String blogList(Model theModel){
-        List<Posts> thePostList = thePostsService.findAll();
+    public String blogList(@RequestParam(defaultValue = "0") int pageNo, Model theModel){
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        List<Posts> thePostList = thePostsService.findAll(paging).getContent();
+        theModel = pagingCalculation(theModel,thePostsService.findAll().size(), pageNo);
         theModel.addAttribute("blogList", thePostList);
         return "blog-list";
+    }
+
+    // Add mapping for /nextPage
+    @GetMapping("/nextPage")
+    public String nextPage(@RequestParam("pageNo") Integer pageNo, Model theModel){
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        List<Posts> thePostList = thePostsService.findAll(paging).getContent();
+        theModel = pagingCalculation(theModel,thePostsService.findAll().size(), pageNo);
+        theModel.addAttribute("blogList", thePostList);
+        return "blog-list";
+    }
+
+    private static Model pagingCalculation(Model theModel, int totalNumberOfBlog, int pageNo){
+        int currentNumberOfBlog = (pageNo + 1) * pageSize;
+        if ( totalNumberOfBlog > currentNumberOfBlog){
+            if (pageNo > 0 ){
+                theModel.addAttribute("previous", false);
+            }else {
+                theModel.addAttribute("previous", true);
+            }
+            theModel.addAttribute("next", false);
+        }else if (totalNumberOfBlog <= currentNumberOfBlog) {
+            if (pageNo > 0 ){
+                theModel.addAttribute("previous", false);
+            }else {
+                theModel.addAttribute("previous", true);
+            }
+            theModel.addAttribute("next", true);
+        }
+        theModel.addAttribute("nextPageNumber" , (pageNo + 1));
+        theModel.addAttribute("previousPageNumber" , (pageNo - 1));
+        return theModel;
     }
 
     // Add mapping for /showFormForCreateBlog

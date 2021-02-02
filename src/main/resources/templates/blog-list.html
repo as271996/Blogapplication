@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Blog Posts</title>
 </head>
@@ -67,18 +68,18 @@
                     <td>
                         <!-- Add title-->
                         <a th:href="@{/blog/showFullBlogPost(postId=${tempPosts.id})}">
-                            <h5 th:text="${tempPosts.title}" />
+                            <h5 th:text="${tempPosts.title}"/>
                         </a>
-                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${tempPosts.publishedAt}" />
+                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${tempPosts.publishedAt}"/>
                         <div th:if="${tempPosts.tagsList != null}">
                             <b>Tags</b>
                             <ul>
                                 <th:block th:object="${tempPosts}">
-                                    <li th:each="tags : *{tagsList}" th:text="${tags.name}" />
+                                    <li th:each="tags : *{tagsList}" th:text="${tags.name}"/>
                                 </th:block>
                             </ul>
                         </div>
-                        <p th:text="${tempPosts.excerpt}" />
+                        <p th:text="${tempPosts.excerpt}"/>
 
                         <!-- Add update button/link -->
                         <a th:href="@{/blog/showFormForUpdate(postId=${tempPosts.id})}">
@@ -101,14 +102,12 @@
             </table>
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    <li class="page-item" th:if="${!previous}">
+                        <a class="page-link" th:href="@{/blog/nextPage(pageNo=${previousPageNumber})}">Previous</a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
+                    <li class="page-item page-link" th:text="${nextPageNumber}" />
+                    <li class="page-item" th:if="${!next}">
+                        <a class="page-link" th:href="@{/blog/nextPage(pageNo=${nextPageNumber})}">Next</a>
                     </li>
                 </ul>
             </nav>

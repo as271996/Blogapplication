@@ -4,6 +4,9 @@ import com.mountblue.blog.blogapplication.DAO.PostsRepository;
 import com.mountblue.blog.blogapplication.entity.Posts;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +25,16 @@ public class PostsServiceImpl implements PostsService {
     @Override
     public List<Posts> findAll() {
         return thePostsRepository.findAll();
+    }
+
+    @Override
+    public List<Posts> findAll(Sort sort) {
+        return thePostsRepository.findAll(sort);
+    }
+
+    @Override
+    public Page<Posts> findAll(Pageable pageable) {
+        return thePostsRepository.findAll(pageable);
     }
 
     @Override
