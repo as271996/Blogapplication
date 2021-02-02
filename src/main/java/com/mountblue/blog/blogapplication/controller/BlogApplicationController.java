@@ -6,6 +6,7 @@ import com.mountblue.blog.blogapplication.service.CommentsService;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import com.mountblue.blog.blogapplication.service.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -38,8 +39,9 @@ public class BlogApplicationController {
     @GetMapping("/bloglist")
     public String blogList(@RequestParam(defaultValue = "0") int pageNo, Model theModel){
         Pageable paging = PageRequest.of(pageNo, pageSize);
-        List<Posts> thePostList = thePostsService.findAll(paging).getContent();
-        theModel = pagingCalculation(theModel,thePostsService.findAll().size(), pageNo);
+        Page<Posts> thePostPages =  thePostsService.findAll(paging);
+        List<Posts> thePostList = thePostPages.getContent();
+        theModel = pagingCalculation(theModel,(int)thePostPages.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", thePostList);
         return "blog-list";
     }
@@ -160,6 +162,20 @@ public class BlogApplicationController {
         thePosts.add(theComments);
         thePostsService.save(thePosts);
         return "redirect:/blog/showFullBlogPost?postId=" + theId;
+    }
+
+    // Add mapping for /search
+    @GetMapping("/search")
+    public String search(@RequestParam("keyword") String keyword,
+                         @RequestParam(defaultValue = "0") int pageNo,
+                         Model theModel){
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        Page<Posts> theSearchPostPage = thePostsService.search(keyword, paging);
+        List<Posts> theSearchPostList = theSearchPostPage.getContent();
+        theModel.addAttribute(theSearchPostList);
+        theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
+        theModel.addAttribute("blogList", theSearchPostList);
+        return "blog-list";
     }
 }
 

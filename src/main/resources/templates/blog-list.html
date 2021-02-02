@@ -10,6 +10,11 @@
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
     <title>Blog Posts</title>
+    <script type="text/javascript">
+    function clearSearch() {
+        window.location = "[[@{/}]]";
+    }
+</script>
 </head>
 <body>
 
@@ -58,10 +63,14 @@
             </div>
         </div>
         <div class="mx-auto" style="width: 800px;">
-            <div class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </div>
+
+            <form th:action="@{/blog/search}">
+                <div class="d-flex">
+                <input class="form-control me-2" type="search" name="keyword" id="keyword"
+                       th:value="${keyword}" placeholder="Search" aria-label="Search" required />
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                </div>
+            </form>
             <br>
             <table class="table">
                 <tr th:each="tempPosts : ${blogList}">
@@ -70,7 +79,7 @@
                         <a th:href="@{/blog/showFullBlogPost(postId=${tempPosts.id})}">
                             <h5 th:text="${tempPosts.title}"/>
                         </a>
-                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${tempPosts.publishedAt}"/>
+                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy')}"/>
                         <div th:if="${tempPosts.tagsList != null}">
                             <b>Tags</b>
                             <ul>

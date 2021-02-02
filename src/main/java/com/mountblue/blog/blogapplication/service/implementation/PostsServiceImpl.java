@@ -58,4 +58,20 @@ public class PostsServiceImpl implements PostsService {
     public void deleteById(int theId) {
         thePostsRepository.deleteById(theId);
     }
+
+    @Override
+    public Page<Posts> findByTitleOrAuthorOrContent(String title, String author, String content) {
+        return null;
+    }
+
+    @Override
+    public Page<Posts> search(String keyword, Pageable pageable) {
+        keyword = keyword.strip();
+        if (keyword == null) {
+            throw new RuntimeException("Did not find any match for - " + keyword);
+        } else if (keyword.isEmpty()) {
+            throw new RuntimeException("Please avoid space search");
+        }
+        return (Page<Posts>) thePostsRepository.search(keyword, pageable);
+    }
 }

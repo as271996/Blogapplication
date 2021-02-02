@@ -15,4 +15,9 @@ public interface PostsService {
     public Posts findById(int theId);
     public void save(Posts thePosts);
     public void deleteById(int theId);
+
+    public Page<Posts> findByTitleOrAuthorOrContent(String title, String author,String content);
+
+    //@Query("SELECT p FROM posts p WHERE CONCAT(p.title, ' ', p.content, ' ', p.author, ' ', p.tags) LIKE ('%',:keyword,'%')")
+    public Page<Posts> search(String keyword, Pageable pageable);
 }
