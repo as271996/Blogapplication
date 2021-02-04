@@ -17,11 +17,11 @@
     <div class="mx-auto" style="width: 800px;">
         <p th:text="${post.content}" />
         <p th:text="'by ' + ${post.author} + ', ' + ${#dates.format(post.publishedAt, 'dd-MMM-yyyy')}" />
-        <div th:if="${post.tagsList != null}">
-            <b>Tags</b>
-            <ul>
+        <div  th:if="${post.tagsList != null}" >
+            <ul class="list-inline">
+                <b>Tags:</b>
                 <th:block th:object="${post}">
-                    <li th:each="tags : *{tagsList}" th:text="${tags.name}" />
+                    <li class="list-inline-item" th:each="tags : *{tagsList}" th:text="${tags.name}"/>
                 </th:block>
             </ul>
         </div>
@@ -66,7 +66,7 @@
     </table>
 
     <hr>
-    <a th:href="@{/blog/bloglist}">Back to Blog Posts</a>
+    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success">Go Home</a>
     <br><br><br>
 </div>
 </body>

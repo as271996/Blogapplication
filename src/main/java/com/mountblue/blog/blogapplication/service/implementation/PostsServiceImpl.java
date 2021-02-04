@@ -59,10 +59,6 @@ public class PostsServiceImpl implements PostsService {
         thePostsRepository.deleteById(theId);
     }
 
-    @Override
-    public Page<Posts> findByTitleOrAuthorOrContent(String title, String author, String content) {
-        return null;
-    }
 
     @Override
     public Page<Posts> search(String keyword, Pageable pageable) {

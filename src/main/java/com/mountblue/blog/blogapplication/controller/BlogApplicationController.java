@@ -37,23 +37,15 @@ public class BlogApplicationController {
     }
 
     // Add mapping for /bloglist
-    @GetMapping("/bloglist")
-    public String blogList(@RequestParam(defaultValue = "0") int pageNo, Model theModel){
+    @GetMapping(value = {"/bloglist"})
+    public String blogList(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                           Model theModel){
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Posts> thePostPages =  thePostsService.findAll(paging);
         List<Posts> thePostList = thePostPages.getContent();
         theModel = pagingCalculation(theModel,(int)thePostPages.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", thePostList);
-        return "blog-list";
-    }
-
-    // Add mapping for /nextPage
-    @GetMapping("/nextPage")
-    public String nextPage(@RequestParam("pageNo") Integer pageNo, Model theModel){
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        List<Posts> thePostList = thePostsService.findAll(paging).getContent();
-        theModel = pagingCalculation(theModel,thePostsService.findAll().size(), pageNo);
-        theModel.addAttribute("blogList", thePostList);
+        theModel.addAttribute("nextPage","/blog/bloglist");
         return "blog-list";
     }
 
@@ -160,6 +152,7 @@ public class BlogApplicationController {
         Posts thePosts = thePostsService.findById(theId);
         theComments.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         theComments.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
         thePosts.add(theComments);
         thePostsService.save(thePosts);
         return "redirect:/blog/showFullBlogPost?postId=" + theId;
@@ -168,22 +161,23 @@ public class BlogApplicationController {
     // Add mapping for /search
     @GetMapping("/search")
     public String search(@RequestParam("keyword") String keyword,
-                         @RequestParam(defaultValue = "0") int pageNo,
+                         @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                          Model theModel){
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Posts> theSearchPostPage = thePostsService.search(keyword, paging);
         List<Posts> theSearchPostList = theSearchPostPage.getContent();
-        theModel.addAttribute(theSearchPostList);
         theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", theSearchPostList);
+        theModel.addAttribute("keyword", keyword);
+        theModel.addAttribute("nextPage","/blog/search");
         return "blog-list";
     }
 
     // Add mapping for /sort
-    @GetMapping("/sort")
+    @GetMapping(value = {"/sort"})
     public String sortBy(@RequestParam("sortBy") String sortBy,
                          @RequestParam("order") String order,
-                         @RequestParam(defaultValue = "0") int pageNo,
+                         @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                          Model theModel){
         Pageable sortedBy;
         if ("asc".equals(order)) {
@@ -196,8 +190,13 @@ public class BlogApplicationController {
         theModel.addAttribute(theSortedPostList);
         theModel = pagingCalculation(theModel,(int) theSortedPostPage.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", theSortedPostList);
+        theModel.addAttribute("sortBy",sortBy);
+        theModel.addAttribute("order",order);
+        String nextPage = "/blog/sort?sortBy="+sortBy+"&order="+order;
+        theModel.addAttribute("nextPage",nextPage);
         return "blog-list";
     }
+
 }
 
 

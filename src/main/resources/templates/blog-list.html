@@ -27,22 +27,26 @@
             <form th:action="@{/blog/sort}">
                 <div class="form-group">
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="author" name="sortBy" class="custom-control-input" value="author"/>
+                        <input type="radio" id="author" name="sortBy" class="custom-control-input"
+                               value="author" th:checked="${(sortBy=='author') ? true: false}"/>
                         <label class="custom-control-label"for="author">Author</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="publishedAt" name="sortBy" class="custom-control-input" value="publishedAt" />
+                        <input type="radio" id="publishedAt" name="sortBy" class="custom-control-input"
+                               value="publishedAt" th:checked="${(sortBy=='publishedAt') ? true: false}"/>
                         <label class="custom-control-label" for="publishedAt">Published DateTime</label>
                     </div>
                 </div>
                 <hr>
                 <div class="form-group">
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="asc" name="order" class="custom-control-input" value="asc"/>
+                        <input type="radio" id="asc" name="order" class="custom-control-input"
+                               value="asc" th:checked="${(order=='asc') ? true: false}"/>
                         <label class="custom-control-label"for="asc">Asc</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="dsc" name="order" class="custom-control-input" value="dsc">
+                        <input type="radio" id="dsc" name="order" class="custom-control-input"
+                               value="dsc"  th:checked="${(order=='dsc') ? true: false}">
                         <label class="custom-control-label" for="dsc">Dsc</label>
                     </div>
                 </div>
@@ -67,16 +71,15 @@
                             <h5 th:text="${tempPosts.title}"/>
                         </a>
                         <p th:text="'by ' + ${tempPosts.author} + ', ' + ${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy')}"/>
-                        <div th:if="${tempPosts.tagsList != null}">
-                            <b>Tags</b>
-                            <ul>
+                        <p th:text="${tempPosts.excerpt}"/>
+                        <div  th:if="${tempPosts.tagsList != null}" >
+                            <ul class="list-inline">
+                                <b>Tags:</b>
                                 <th:block th:object="${tempPosts}">
-                                    <li th:each="tags : *{tagsList}" th:text="${tags.name}"/>
+                                    <li class="list-inline-item" th:each="tags : *{tagsList}" th:text="${tags.name}"/>
                                 </th:block>
                             </ul>
                         </div>
-                        <p th:text="${tempPosts.excerpt}"/>
-
                         <!-- Add update button/link -->
                         <a th:href="@{/blog/showFormForUpdate(postId=${tempPosts.id})}">
                             Update
@@ -99,16 +102,19 @@
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:if="${!previous}">
-                        <a class="page-link" th:href="@{/blog/nextPage(pageNo=${previousPageNumber})}">Previous</a>
+                        <a class="btn btn-outline-success" th:href="@{${nextPage}(pageNo=${previousPageNumber})}">Previous</a>
                     </li>
                     <li class="page-item page-link" th:text="${nextPageNumber}" />
                     <li class="page-item" th:if="${!next}">
-                        <a class="page-link" th:href="@{/blog/nextPage(pageNo=${nextPageNumber})}">Next</a>
+                        <a class="btn btn-outline-success" th:href="@{${nextPage}(pageNo=${nextPageNumber})}">Next</a>
                     </li>
                 </ul>
             </nav>
         </div>
     </div>
+    <hr>
+    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success">Go Home</a>
+    <br><br><br>
 </div>
 </body>
 </html>

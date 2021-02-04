@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "posts")
@@ -167,6 +168,7 @@ public class Posts {
         if(commentsList == null) {
             commentsList = new ArrayList<>();
         }
+        commentsList.removeIf(id -> (commentsList.stream().anyMatch(t -> t.getId() == (theComments.getId()))));
         commentsList.add(theComments);
     }
 
