@@ -14,14 +14,35 @@
 <body>
 
 <div class="container" style="width: 100%;">
-    <h3>List of Blogs</h3>
+    <br>
+    <div class="clearfix">
+        <h3 class="float-left">List of Blogs</h3>
+        <a href="#" class="btn btn-outline-success float-right">Login</a>
+    </div>
     <hr>
     <div class="d-flex flex-row bd-highlight mb-3">
         <div class="mx-auto" style="width: auto;">
             <!-- Add 'create new blog' button -->
-            <a th:href="@{/blog/showFormForCreateBlog}" class="btn btn-outline-success">
+            <a th:href="@{/blog/showFormForCreateBlog}" class="btn btn-outline-success d-flex justify-content-center">
                 Create New Blog
             </a>
+            <hr>
+            <p><b>Filter by</b></p>
+            <form th:action="@{/blog/filter}">
+                <div class="form-group">
+                    <div>
+                        <label for="from">Published from: </label>
+                        <input type="datetime-local" class="form-control mb-2 col-auto" id="from" name="from" />
+                    </div>
+                    <div>
+                        <label for="to">Published to:</label>
+                        <input type="datetime-local" class="form-control mb-2 col-auto" id="to" name="to"/>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-outline-success" style="width:100%" type="submit">Filter</button>
+                </div>
+            </form>
             <hr>
             <p><b>Sort by</b></p>
             <form th:action="@{/blog/sort}">
@@ -50,7 +71,9 @@
                         <label class="custom-control-label" for="dsc">Dsc</label>
                     </div>
                 </div>
-                <button class="btn btn-outline-success" type="submit">Sort</button>
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-outline-success" style="width:100%" type="submit">Sort</button>
+                </div>
             </form>
         </div>
         <div class="mx-auto" style="width: 800px;">
@@ -113,7 +136,7 @@
         </div>
     </div>
     <hr>
-    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success">Go Home</a>
+    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success ml-auto">Go Home</a>
     <br><br><br>
 </div>
 </body>
