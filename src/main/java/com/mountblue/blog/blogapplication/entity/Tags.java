@@ -23,9 +23,7 @@ public class Tags {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @ManyToMany(fetch=FetchType.LAZY,
-            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
             name="post_tags",
             joinColumns=@JoinColumn(name="tag_id"),

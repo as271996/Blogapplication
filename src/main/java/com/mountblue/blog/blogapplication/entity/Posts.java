@@ -43,9 +43,7 @@ public class Posts {
     @JoinColumn(name="post_id", nullable = false)
     private List<Comments> commentsList;
 
-    @ManyToMany(fetch=FetchType.LAZY,
-            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
             name="post_tags",
             joinColumns=@JoinColumn(name="post_id"),

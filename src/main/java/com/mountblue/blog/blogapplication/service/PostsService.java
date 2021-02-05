@@ -17,4 +17,9 @@ public interface PostsService {
     public void deleteById(int theId);
 
     public Page<Posts> search(String keyword, Pageable pageable);
+    public List<Posts> searchInCurrentList(List<Posts> tempCurrentList, String keyword);
+
+    public Page<Posts> getCurrentPostList(Pageable pageable,List<Posts> theCurrentPostList);
+
+    public List<Posts> sortPostsList(List<Posts> thePostsList,String sortBy, String direction);
 }
