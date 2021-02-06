@@ -32,11 +32,11 @@
                 <div class="form-group">
                     <div>
                         <label for="from">Published from: </label>
-                        <input type="datetime-local" class="form-control mb-2 col-auto" id="from" name="from" />
+                        <input type="datetime-local" class="form-control mb-2 col-auto" id="from" name="from" th:value="${from}"/>
                     </div>
                     <div>
                         <label for="to">Published to:</label>
-                        <input type="datetime-local" class="form-control mb-2 col-auto" id="to" name="to"/>
+                        <input type="datetime-local" class="form-control mb-2 col-auto" id="to" name="to" th:value="${to}"/>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">

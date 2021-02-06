@@ -8,16 +8,22 @@ import com.mountblue.blog.blogapplication.service.PostsService;
 import com.mountblue.blog.blogapplication.service.TagsService;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -122,11 +128,12 @@ public class BlogApplicationController {
         return "create-blog-post";
     }
 
+    /*TODO: COMPLETE SAVE OPTION FOR UPDATE AND CREATE POST */
     // Add mapping for /save
     @PostMapping("/save")
     public String saveBlogPost(@ModelAttribute("posts") Posts thePosts){
         thePosts.setExcerpt(thePosts.getContent());
-        thePosts.setPublishedAt(new Timestamp(System.currentTimeMillis()));
+        //thePosts.setPublishedAt());
         thePosts.setPublished(true);
         thePosts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         thePosts.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
@@ -258,6 +265,7 @@ public class BlogApplicationController {
         return "blog-list";
     }
     //####################################################################################################
+
 }
 
 

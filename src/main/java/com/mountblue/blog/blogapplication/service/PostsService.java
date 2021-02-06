@@ -4,6 +4,7 @@ import com.mountblue.blog.blogapplication.entity.Posts;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public interface PostsService {
     public Page<Posts> getCurrentPostList(Pageable pageable,List<Posts> theCurrentPostList);
 
     public List<Posts> sortPostsList(List<Posts> thePostsList,String sortBy, String direction);
+    //public List<Posts> filterByDate(List<Posts> thePostsList, DateTimeFormat from, DateTimeFormat to);
 }

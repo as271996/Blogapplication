@@ -1,7 +1,12 @@
 package com.mountblue.blog.blogapplication.entity;
 
+import com.sun.istack.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,12 +110,21 @@ public class Posts {
         this.author = author;
     }
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm:ss")
     public Timestamp getPublishedAt() {
         return publishedAt;
     }
 
     public void setPublishedAt(Timestamp publishedAt) {
         this.publishedAt = publishedAt;
+    }
+
+    /*TODO: complete pushing publishedAt date problem in databse*/
+    public void setPublishedAt(String publishedAt) {
+        String[] str1 = publishedAt.split("T");
+        publishedAt = str1[0] + " " + str1[1]+".000";
+        System.out.println("Published--------------------------------------> " + publishedAt);
+        this.publishedAt = Timestamp.valueOf(publishedAt);
     }
 
     public boolean isPublished() {
