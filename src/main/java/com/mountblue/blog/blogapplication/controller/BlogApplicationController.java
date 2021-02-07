@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,34 +57,14 @@ public class BlogApplicationController {
         theCurrentPostList.setTempCurrentPostsList(thePostsService.findAll());
         Page<Posts> thePostPages = thePostsService.getCurrentPostList(paging,theCurrentPostList.getTempCurrentPostsList());
 
-        theModel = pagingCalculation(theModel,(int)thePostPages.getTotalElements(), pageNo);
+        theModel = thePostsService.pagingCalculation(theModel,(int)thePostPages.getTotalElements(), pageNo, pageSize);
         theModel.addAttribute("blogList", thePostPages.getContent());
         theModel.addAttribute("nextPage","/blog/bloglist");
 
         return "blog-list";
     }
 
-    private static Model pagingCalculation(Model theModel, int totalNumberOfBlog, int pageNo){
-        int currentNumberOfBlog = (pageNo + 1) * pageSize;
-        if ( totalNumberOfBlog > currentNumberOfBlog){
-            if (pageNo > 0 ){
-                theModel.addAttribute("previous", false);
-            }else {
-                theModel.addAttribute("previous", true);
-            }
-            theModel.addAttribute("next", false);
-        }else if (totalNumberOfBlog <= currentNumberOfBlog) {
-            if (pageNo > 0 ){
-                theModel.addAttribute("previous", false);
-            }else {
-                theModel.addAttribute("previous", true);
-            }
-            theModel.addAttribute("next", true);
-        }
-        theModel.addAttribute("nextPageNumber" , (pageNo + 1));
-        theModel.addAttribute("previousPageNumber" , (pageNo - 1));
-        return theModel;
-    }
+
 
 //#####################################################################################################################
 //                                          CRUD OPERATION ON BLOG POSTS
@@ -124,9 +105,17 @@ public class BlogApplicationController {
                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME ) LocalDateTime publishedDate
                                ){
         thePosts.setExcerpt(thePosts.getContent());
+
         thePosts.setPublishedAt(Timestamp.valueOf(publishedDate));
-        thePosts.setPublished(true);
-        thePosts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+        if (thePosts.getPublishedAt().after(new Timestamp(System.currentTimeMillis()))){
+            thePosts.setPublished(false);
+        }else {
+            thePosts.setPublished(true);
+        }
+        if (thePosts.getCreatedAt() == null){
+            thePosts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        }
         thePosts.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         thePostsService.save(thePosts);
         return "redirect:/blog/bloglist";
@@ -189,13 +178,12 @@ public class BlogApplicationController {
                          @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                          @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
                          Model theModel){
-
         Pageable paging = PageRequest.of(pageNo, pageSize);
         List<Posts> theSearchedList = thePostsService.searchInCurrentList(theCurrentPostList.getTempCurrentPostsList(), keyword);
         theCurrentPostList.setTempCurrentPostsList(theSearchedList);
         Page<Posts> theSearchPostPage = thePostsService.getCurrentPostList(paging,theSearchedList);
 
-        theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
+        theModel = thePostsService.pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo, pageSize);
         theModel.addAttribute("blogList", theSearchPostPage.getContent());
         theModel.addAttribute("keyword", keyword);
         theModel.addAttribute("nextPage","/blog/search?keyword="+keyword);
@@ -210,13 +198,12 @@ public class BlogApplicationController {
                          @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                          @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
                          Model theModel){
-
         Pageable paging = PageRequest.of(pageNo, pageSize);
         List<Posts> theSearchedList = thePostsService.sortPostsList(theCurrentPostList.getTempCurrentPostsList(), sortBy, order);
         theCurrentPostList.setTempCurrentPostsList(theSearchedList);
         Page<Posts> theSearchPostPage = thePostsService.getCurrentPostList(paging,theSearchedList);
 
-        theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
+        theModel = thePostsService.pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo, pageSize);
         theModel.addAttribute("blogList", theSearchPostPage.getContent());
         theModel.addAttribute("sortBy",sortBy);
         theModel.addAttribute("order",order);
@@ -231,22 +218,27 @@ public class BlogApplicationController {
                          @RequestParam("filterBy") String filterBy,
                          @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                          @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
+                         HttpServletRequest request,
                          Model theModel){
-
         Pageable paging = PageRequest.of(pageNo, pageSize);
         List<Posts> theFilteredPostList=null;
+        String nextPage = "";
         if ("author".equals(filterBy)){
+            nextPage = "/blog/filter?keyword="+keyword+"&filterBy="+filterBy;
             theFilteredPostList = thePostsService.findByAuthor(keyword);
         }else if ("tag".equals(filterBy)){
+            String[] tag  = keyword.split("#");
+            nextPage = "/blog/filter?keyword=%23"+tag[tag.length - 1]+"&filterBy="+filterBy;
             theFilteredPostList = thePostsService.findByTag(keyword);
         }
         theCurrentPostList.setTempCurrentPostsList(theFilteredPostList);
         Page<Posts> theFilteredPostPage = thePostsService.getCurrentPostList(paging,theFilteredPostList);
 
-        theModel = pagingCalculation(theModel,(int) theFilteredPostPage.getTotalElements(), pageNo);
+        theModel = thePostsService.pagingCalculation(theModel,(int) theFilteredPostPage.getTotalElements(), pageNo, pageSize);
         theModel.addAttribute("blogList", theFilteredPostPage.getContent());
         theModel.addAttribute("keyword", keyword);
-        theModel.addAttribute("nextPage","/blog/filter");
+        theModel.addAttribute("filterBy", filterBy);
+        theModel.addAttribute("nextPage",nextPage);
 
         return "blog-list";
     }
@@ -260,7 +252,6 @@ public class BlogApplicationController {
                                @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                                @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
                                Model theModel){
-
         Pageable paging = PageRequest.of(pageNo, pageSize);
         List<Posts> theFilteredPostList=thePostsService.filterByDatePostList(theCurrentPostList.getTempCurrentPostsList(),
                 Timestamp.valueOf(from),Timestamp.valueOf(to));
@@ -268,7 +259,7 @@ public class BlogApplicationController {
         theCurrentPostList.setTempCurrentPostsList(theFilteredPostList);
         Page<Posts> theFilteredPostPage = thePostsService.getCurrentPostList(paging,theFilteredPostList);
 
-        theModel = pagingCalculation(theModel,(int) theFilteredPostPage.getTotalElements(), pageNo);
+        theModel = thePostsService.pagingCalculation(theModel,(int) theFilteredPostPage.getTotalElements(), pageNo, pageSize);
         theModel.addAttribute("blogList", theFilteredPostPage.getContent());
         theModel.addAttribute("from",from);
         theModel.addAttribute("to",to);

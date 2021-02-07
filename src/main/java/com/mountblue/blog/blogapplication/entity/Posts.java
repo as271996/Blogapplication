@@ -1,8 +1,6 @@
 package com.mountblue.blog.blogapplication.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -10,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "posts")
@@ -38,13 +35,6 @@ public class Posts {
 
     @Transient
     private LocalDateTime publishedDate;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.sss")
-    public LocalDateTime getPublishedDate() {
-        if (publishedAt != null)
-            return publishedAt.toLocalDateTime();
-        return new Timestamp(System.currentTimeMillis()).toLocalDateTime();
-    }
 
     @Column(name = "is_published")
     private boolean isPublished;
@@ -127,6 +117,13 @@ public class Posts {
         return publishedAt;
     }
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.sss")
+    public LocalDateTime getPublishedDate() {
+        if (publishedAt != null)
+            return publishedAt.toLocalDateTime();
+        return new Timestamp(System.currentTimeMillis()).toLocalDateTime();
+    }
+
     public void setPublishedAt(Timestamp publishedAt) {
         this.publishedAt = publishedAt;
     }
@@ -145,6 +142,9 @@ public class Posts {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = Timestamp.valueOf(createdAt);
     }
 
     public Timestamp getUpdatedAt() {
