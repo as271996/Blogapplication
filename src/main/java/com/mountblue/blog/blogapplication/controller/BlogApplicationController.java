@@ -6,24 +6,18 @@ import com.mountblue.blog.blogapplication.entity.Posts;
 import com.mountblue.blog.blogapplication.service.CommentsService;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import com.mountblue.blog.blogapplication.service.TagsService;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -49,34 +43,25 @@ public class BlogApplicationController {
         this.theCommentsService = theCommentsService;
         this.theTagsService = theTagsService;
     }
-
-    // Add mapping for /bloglist
-    /*@GetMapping(value = {"/bloglist"})
-    public String blogList(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
-                           Model theModel){
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Posts> thePostPages =  thePostsService.findAll(paging);
-        List<Posts> thePostList = thePostPages.getContent();
-        theModel = pagingCalculation(theModel,(int)thePostPages.getTotalElements(), pageNo);
-        theModel.addAttribute("blogList", thePostList);
-        theModel.addAttribute("nextPage","/blog/bloglist");
-        return "blog-list";
-    }*/
-    //###############################################################################################
+//#####################################################################################################################
+//                                             PRINTING ALL BLOG POSTS HERE
+//#####################################################################################################################
     // Add mapping for /bloglist
     @GetMapping(value = {"/bloglist"})
     public String blogList(@RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                            @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
                            Model theModel){
+
         Pageable paging = PageRequest.of(pageNo, pageSize);
         theCurrentPostList.setTempCurrentPostsList(thePostsService.findAll());
         Page<Posts> thePostPages = thePostsService.getCurrentPostList(paging,theCurrentPostList.getTempCurrentPostsList());
+
         theModel = pagingCalculation(theModel,(int)thePostPages.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", thePostPages.getContent());
         theModel.addAttribute("nextPage","/blog/bloglist");
+
         return "blog-list";
     }
-    //###############################################################################################
 
     private static Model pagingCalculation(Model theModel, int totalNumberOfBlog, int pageNo){
         int currentNumberOfBlog = (pageNo + 1) * pageSize;
@@ -99,6 +84,10 @@ public class BlogApplicationController {
         theModel.addAttribute("previousPageNumber" , (pageNo - 1));
         return theModel;
     }
+
+//#####################################################################################################################
+//                                          CRUD OPERATION ON BLOG POSTS
+//#####################################################################################################################
 
     // Add mapping for /showFormForCreateBlog
     @GetMapping("/showFormForCreateBlog")
@@ -128,12 +117,14 @@ public class BlogApplicationController {
         return "create-blog-post";
     }
 
-    /*TODO: COMPLETE SAVE OPTION FOR UPDATE AND CREATE POST */
     // Add mapping for /save
     @PostMapping("/save")
-    public String saveBlogPost(@ModelAttribute("posts") Posts thePosts){
+    public String saveBlogPost(@ModelAttribute("posts") Posts thePosts,
+                               @RequestParam("publishedDate")
+                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME ) LocalDateTime publishedDate
+                               ){
         thePosts.setExcerpt(thePosts.getContent());
-        //thePosts.setPublishedAt());
+        thePosts.setPublishedAt(Timestamp.valueOf(publishedDate));
         thePosts.setPublished(true);
         thePosts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         thePosts.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
@@ -147,6 +138,9 @@ public class BlogApplicationController {
         thePostsService.deleteById(theId);
         return "redirect:/blog/bloglist";
     }
+//#####################################################################################################################
+//                                        CRUD OPERATION ON COMMENT SECTION
+//#####################################################################################################################
 
     // Add mapping for /showFormForComment
     @GetMapping("/showFormForComment")
@@ -163,7 +157,6 @@ public class BlogApplicationController {
         Comments theComments = theCommentsService.findById(theId);
         theModel.addAttribute("comments", theComments);
         return "comment-form";
-
     }
 
     // Add mapping for /saveComment
@@ -186,63 +179,30 @@ public class BlogApplicationController {
         return "redirect:/blog/showFullBlogPost?postId=" + postId;
     }
 
-    // Add mapping for /search
-    /*@GetMapping("/search")
-    public String search(@RequestParam("keyword") String keyword,
-                         @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
-                         Model theModel){
-        Pageable paging = PageRequest.of(pageNo, pageSize);
-        Page<Posts> theSearchPostPage = thePostsService.search(keyword, paging);
-        List<Posts> theSearchPostList = theSearchPostPage.getContent();
-        theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
-        theModel.addAttribute("blogList", theSearchPostList);
-        theModel.addAttribute("keyword", keyword);
-        theModel.addAttribute("nextPage","/blog/search");
-        return "blog-list";
-    }*/
-    //#############################################################################################################
+//#####################################################################################################################
+//                                          SEARCHING, SORTING AND FILTERING
+//#####################################################################################################################
+
     // Add mapping for /search
     @GetMapping("/search")
     public String search(@RequestParam("keyword") String keyword,
                          @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
                          @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
                          Model theModel){
+
         Pageable paging = PageRequest.of(pageNo, pageSize);
-        List<Posts> theSearchedList = thePostsService.searchInCurrentList(theCurrentPostList
-                .getTempCurrentPostsList(), keyword);
+        List<Posts> theSearchedList = thePostsService.searchInCurrentList(theCurrentPostList.getTempCurrentPostsList(), keyword);
         theCurrentPostList.setTempCurrentPostsList(theSearchedList);
         Page<Posts> theSearchPostPage = thePostsService.getCurrentPostList(paging,theSearchedList);
+
         theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", theSearchPostPage.getContent());
         theModel.addAttribute("keyword", keyword);
         theModel.addAttribute("nextPage","/blog/search?keyword="+keyword);
+
         return "blog-list";
     }
-    //#############################################################################################################
-    // Add mapping for /sort
-    /*@GetMapping(value = {"/sort"})
-    public String sortBy(@RequestParam("sortBy") String sortBy,
-                         @RequestParam("order") String order,
-                         @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
-                         Model theModel){
-        Pageable sortedBy;
-        if ("asc".equals(order)) {
-            sortedBy = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
-        } else {
-            sortedBy = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
-        }
-        Page<Posts> theSortedPostPage = thePostsService.findAll(sortedBy);
-        List<Posts> theSortedPostList = theSortedPostPage.getContent();
-        theModel.addAttribute(theSortedPostList);
-        theModel = pagingCalculation(theModel,(int) theSortedPostPage.getTotalElements(), pageNo);
-        theModel.addAttribute("blogList", theSortedPostList);
-        theModel.addAttribute("sortBy",sortBy);
-        theModel.addAttribute("order",order);
-        String nextPage = "/blog/sort?sortBy="+sortBy+"&order="+order;
-        theModel.addAttribute("nextPage",nextPage);
-        return "blog-list";
-    }*/
-    //####################################################################################################
+
     // Add mapping for /sort
     @GetMapping(value = {"/sort"})
     public String sortBy(@RequestParam("sortBy") String sortBy,
@@ -252,20 +212,70 @@ public class BlogApplicationController {
                          Model theModel){
 
         Pageable paging = PageRequest.of(pageNo, pageSize);
-        List<Posts> theSearchedList = thePostsService.sortPostsList(
-                theCurrentPostList.getTempCurrentPostsList(), sortBy, order);
+        List<Posts> theSearchedList = thePostsService.sortPostsList(theCurrentPostList.getTempCurrentPostsList(), sortBy, order);
         theCurrentPostList.setTempCurrentPostsList(theSearchedList);
         Page<Posts> theSearchPostPage = thePostsService.getCurrentPostList(paging,theSearchedList);
+
         theModel = pagingCalculation(theModel,(int) theSearchPostPage.getTotalElements(), pageNo);
         theModel.addAttribute("blogList", theSearchPostPage.getContent());
         theModel.addAttribute("sortBy",sortBy);
         theModel.addAttribute("order",order);
-        String nextPage = "/blog/sort?sortBy="+sortBy+"&order="+order;
-        theModel.addAttribute("nextPage",nextPage);
+        theModel.addAttribute("nextPage","/blog/sort?sortBy="+sortBy+"&order="+order);
+
         return "blog-list";
     }
-    //####################################################################################################
 
+    // Add mapping for /filter
+    @GetMapping("/filter")
+    public String filter(@RequestParam("keyword") String keyword,
+                         @RequestParam("filterBy") String filterBy,
+                         @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                         @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
+                         Model theModel){
+
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        List<Posts> theFilteredPostList=null;
+        if ("author".equals(filterBy)){
+            theFilteredPostList = thePostsService.findByAuthor(keyword);
+        }else if ("tag".equals(filterBy)){
+            theFilteredPostList = thePostsService.findByTag(keyword);
+        }
+        theCurrentPostList.setTempCurrentPostsList(theFilteredPostList);
+        Page<Posts> theFilteredPostPage = thePostsService.getCurrentPostList(paging,theFilteredPostList);
+
+        theModel = pagingCalculation(theModel,(int) theFilteredPostPage.getTotalElements(), pageNo);
+        theModel.addAttribute("blogList", theFilteredPostPage.getContent());
+        theModel.addAttribute("keyword", keyword);
+        theModel.addAttribute("nextPage","/blog/filter");
+
+        return "blog-list";
+    }
+
+    // Add mapping for /filterByDate
+    @GetMapping("/filterByDate")
+    public String filterByDate(@RequestParam("from")
+                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME ) LocalDateTime from,
+                               @RequestParam("to")
+                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME ) LocalDateTime to,
+                               @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
+                               @ModelAttribute("theCurrentPostList") CurrentPostList theCurrentPostList,
+                               Model theModel){
+
+        Pageable paging = PageRequest.of(pageNo, pageSize);
+        List<Posts> theFilteredPostList=thePostsService.filterByDatePostList(theCurrentPostList.getTempCurrentPostsList(),
+                Timestamp.valueOf(from),Timestamp.valueOf(to));
+
+        theCurrentPostList.setTempCurrentPostsList(theFilteredPostList);
+        Page<Posts> theFilteredPostPage = thePostsService.getCurrentPostList(paging,theFilteredPostList);
+
+        theModel = pagingCalculation(theModel,(int) theFilteredPostPage.getTotalElements(), pageNo);
+        theModel.addAttribute("blogList", theFilteredPostPage.getContent());
+        theModel.addAttribute("from",from);
+        theModel.addAttribute("to",to);
+        theModel.addAttribute("nextPage","/blog/filterByDate?from="+from+"&to="+to);
+
+        return "blog-list";
+    }
 }
 
 

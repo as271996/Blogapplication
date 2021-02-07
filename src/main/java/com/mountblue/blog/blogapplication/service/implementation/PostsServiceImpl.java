@@ -2,11 +2,13 @@ package com.mountblue.blog.blogapplication.service.implementation;
 
 import com.mountblue.blog.blogapplication.DAO.PostsRepository;
 import com.mountblue.blog.blogapplication.entity.Posts;
+import com.mountblue.blog.blogapplication.entity.Tags;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,6 +73,7 @@ public class PostsServiceImpl implements PostsService {
     @Override
     public List<Posts> searchInCurrentList(List<Posts> tempCurrentList, String keyword) {
         List<Posts> theCurrentSearchList = new ArrayList<>();
+        if (tempCurrentList.size() <= 0) tempCurrentList = thePostsRepository.findAll();
         keyword = keyword.strip();
         if (keyword == null || keyword.isEmpty()) {
             return tempCurrentList;
@@ -114,6 +117,33 @@ public class PostsServiceImpl implements PostsService {
             }
         }
         return thePostsList;
+    }
+
+    @Override
+    public List<Posts> findByAuthor(String theAuthor) {
+        return thePostsRepository.findByAuthor(theAuthor);
+    }
+
+    @Override
+    public Page<Posts> findByPublishedAt(Timestamp thePublishedAt, Pageable pageable) {
+        return thePostsRepository.findByPublishedAt(thePublishedAt, pageable);
+    }
+
+    @Override
+    public List<Posts> findByTag(String tags) {
+        return thePostsRepository.findByTag(tags);
+    }
+
+    @Override
+    public List<Posts> filterByDatePostList(List<Posts> thePostsList, Timestamp from, Timestamp to) {
+
+        List<Posts> theFilteredPostList = new ArrayList<>();
+        for (Posts post: thePostsList){
+            if (post.getPublishedAt().after(from) && post.getPublishedAt().before(to)){
+                theFilteredPostList.add(post);
+            }
+        }
+        return theFilteredPostList;
     }
     //###########################################################################################
 }

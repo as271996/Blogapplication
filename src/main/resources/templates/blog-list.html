@@ -28,15 +28,17 @@
             </a>
             <hr>
             <p><b>Filter by</b></p>
-            <form th:action="@{/blog/filter}">
+            <form th:action="@{/blog/filterByDate}">
                 <div class="form-group">
                     <div>
                         <label for="from">Published from: </label>
-                        <input type="datetime-local" class="form-control mb-2 col-auto" id="from" name="from" th:value="${from}"/>
+                        <input type="datetime-local" class="form-control mb-2 col-auto" id="from" name="from"
+                               th:value="${from}" step=1 required/>
                     </div>
                     <div>
                         <label for="to">Published to:</label>
-                        <input type="datetime-local" class="form-control mb-2 col-auto" id="to" name="to" th:value="${to}"/>
+                        <input type="datetime-local" class="form-control mb-2 col-auto" id="to" name="to"
+                               th:value="${to}" step=1 required/>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">
@@ -93,13 +95,19 @@
                         <a th:href="@{/blog/showFullBlogPost(postId=${tempPosts.id})}">
                             <h5 th:text="${tempPosts.title}"/>
                         </a>
-                        <p th:text="'by ' + ${tempPosts.author} + ', ' + ${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy')}"/>
+
+                        <p>by <span><a th:text="${tempPosts.author}" th:href="@{/blog/filter(keyword=${tempPosts.author},filterBy=author)}" />,</span>
+                            <span th:text="${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy HH:mm:ss')}" />
+                        </p>
                         <p th:text="${tempPosts.excerpt}"/>
+
                         <div  th:if="${tempPosts.tagsList != null}" >
                             <ul class="list-inline">
                                 <b>Tags:</b>
                                 <th:block th:object="${tempPosts}">
-                                    <li class="list-inline-item" th:each="tags : *{tagsList}" th:text="${tags.name}"/>
+                                    <li class="list-inline-item" th:each="tags : *{tagsList}">
+                                        <a th:text="${tags.name}" th:href="@{/blog/filter(keyword=${tags.name},filterBy=tag)}" />
+                                    </li>
                                 </th:block>
                             </ul>
                         </div>

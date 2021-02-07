@@ -41,8 +41,8 @@
         </select>
 
         <!-- Add publish date input #dates.format(tempPosts.publishedAt, 'yyyy-MM-dd'T'hh:mm:ss')-->
-        <input type="datetime-local" th:field="*{publishedAt}"
-               class="form-control mb-4 col-4" placeholder="choose date for publish" step=1>
+        <input type="datetime-local" class="form-control mb-4 col-4" id="publishedDate" name="publishedDate"
+               th:value="${posts.publishedDate}" step=1 required/>
         <button type="submit" class="btn btn-outline-success col-2">Save</button>
 
     </form>

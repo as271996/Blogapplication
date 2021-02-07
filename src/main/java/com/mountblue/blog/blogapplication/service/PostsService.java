@@ -1,12 +1,15 @@
 package com.mountblue.blog.blogapplication.service;
 
 import com.mountblue.blog.blogapplication.entity.Posts;
+import com.mountblue.blog.blogapplication.entity.Tags;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 public interface PostsService {
 
@@ -23,5 +26,9 @@ public interface PostsService {
     public Page<Posts> getCurrentPostList(Pageable pageable,List<Posts> theCurrentPostList);
 
     public List<Posts> sortPostsList(List<Posts> thePostsList,String sortBy, String direction);
-    //public List<Posts> filterByDate(List<Posts> thePostsList, DateTimeFormat from, DateTimeFormat to);
+
+    public List<Posts> findByAuthor(String theAuthor);
+    public Page<Posts> findByPublishedAt(Timestamp thePublishedAt, Pageable pageable);
+    public List<Posts> findByTag(String tags);
+    public List<Posts> filterByDatePostList(List<Posts> thePostsList, Timestamp from, Timestamp to);
 }

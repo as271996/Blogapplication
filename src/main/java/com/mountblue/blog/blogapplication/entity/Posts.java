@@ -1,14 +1,15 @@
 package com.mountblue.blog.blogapplication.entity;
 
-import com.sun.istack.NotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -35,6 +36,16 @@ public class Posts {
     @Column(name = "published_at")
     private Timestamp publishedAt;
 
+    @Transient
+    private LocalDateTime publishedDate;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.sss")
+    public LocalDateTime getPublishedDate() {
+        if (publishedAt != null)
+            return publishedAt.toLocalDateTime();
+        return new Timestamp(System.currentTimeMillis()).toLocalDateTime();
+    }
+
     @Column(name = "is_published")
     private boolean isPublished;
 
@@ -48,13 +59,15 @@ public class Posts {
     @JoinColumn(name="post_id", nullable = false)
     private List<Comments> commentsList;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch=FetchType.EAGER,
+            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+                    CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name="post_tags",
             joinColumns=@JoinColumn(name="post_id"),
             inverseJoinColumns=@JoinColumn(name="tag_id")
     )
-    private List<Tags> tagsList;
+    private Set<Tags> tagsList;
 
     public Posts() {
     }
@@ -110,21 +123,12 @@ public class Posts {
         this.author = author;
     }
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm:ss")
     public Timestamp getPublishedAt() {
         return publishedAt;
     }
 
     public void setPublishedAt(Timestamp publishedAt) {
         this.publishedAt = publishedAt;
-    }
-
-    /*TODO: complete pushing publishedAt date problem in databse*/
-    public void setPublishedAt(String publishedAt) {
-        String[] str1 = publishedAt.split("T");
-        publishedAt = str1[0] + " " + str1[1]+".000";
-        System.out.println("Published--------------------------------------> " + publishedAt);
-        this.publishedAt = Timestamp.valueOf(publishedAt);
     }
 
     public boolean isPublished() {
@@ -159,18 +163,18 @@ public class Posts {
         this.commentsList = commentsList;
     }
 
-    public List<Tags> getTagsList() {
+    public Set<Tags> getTagsList() {
         return tagsList;
     }
 
-    public void setTagsList(List<Tags> tagsList) {
+    public void setTagsList(Set<Tags> tagsList) {
         this.tagsList = tagsList;
     }
 
     public void addTags(Tags theTags) {
 
         if (tagsList == null) {
-            tagsList = new ArrayList<>();
+            tagsList = new HashSet<>();
         }
 
         tagsList.add(theTags);
