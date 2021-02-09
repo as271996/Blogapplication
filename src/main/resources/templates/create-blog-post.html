@@ -1,13 +1,15 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" rel="stylesheet">
 
     <title>Create Blog</title>
 </head>
@@ -21,34 +23,34 @@
 
     <p class="h4 mb-4">Save Your Blog</p>
 
-    <form action="#" th:action="@{/blog/save}"
-          th:object="${posts}" method="POST">
+    <form action="#" method="POST"
+          th:action="@{/blog/save}" th:object="${posts}">
 
         <!-- Add hidden form field to handle update -->
-        <input type="hidden" th:field="*{id}" />
+        <input th:field="*{id}" type="hidden"/>
 
-        <input type="text" th:field="*{title}"
-               class="form-control mb-4 col-4" placeholder="Your blog title">
+        <input class="form-control mb-4 col-4" placeholder="Your blog title"
+               th:field="*{title}" type="text">
 
-        <textarea th:field="*{content}"
-                  class="form-control mb-4 col-4" placeholder="Write your blog..."  />
+        <textarea class="form-control mb-4 col-4"
+                  placeholder="Write your blog..." th:field="*{content}"/>
 
-        <input type="text" th:field="*{author}"
-               class="form-control mb-4 col-4" placeholder="Your Full Name">
+        <input class="form-control mb-4 col-4" placeholder="Your Full Name"
+               th:field="*{author}" type="text" th:readonly="${posts.author != 'anonymousUser' && #authentication.name != 'admin'}">
 
-        <select th:field="*{tagsList}" multiple="multiple" class="form-control mb-4 col-4">
-            <option th:each="tag : ${allTaglist}" th:value="${tag.id}" th:text="${tag.name}" />
+        <select class="form-control mb-4 col-4" multiple="multiple" th:field="*{tagsList}">
+            <option th:each="tag : ${allTaglist}" th:text="${tag.name}" th:value="${tag.id}"/>
         </select>
 
         <!-- Add publish date input #dates.format(tempPosts.publishedAt, 'yyyy-MM-dd'T'hh:mm:ss')-->
-        <input type="datetime-local" class="form-control mb-4 col-4" id="publishedDate" name="publishedDate"
-               th:value="${posts.publishedDate}" step=1 required/>
-        <button type="submit" class="btn btn-outline-success col-2">Save</button>
+        <input class="form-control mb-4 col-4" id="publishedDate" name="publishedDate"
+               step=1 th:value="${posts.publishedDate}" type="datetime-local"/>
+        <button class="btn btn-outline-success col-2" type="submit">Save</button>
 
     </form>
 
     <hr>
-    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success">Go Home</a>
+    <a class="btn btn-outline-success" th:href="@{/blog/bloglist}">Go Home</a>
 
 </div>
 </body>

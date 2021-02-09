@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" rel="stylesheet">
 
     <title>Blog Posts</title>
 </head>
@@ -16,29 +17,47 @@
 <div class="container" style="width: 100%;">
     <br>
     <div class="clearfix">
-        <h3 class="float-left">List of Blogs</h3>
-        <a href="#" class="btn btn-outline-success float-right">Login</a>
+        <h3 class="float-left">List of Blogs <span sec:authentication="name"/>
+         <p th:text="${#authentication.name}" />
+        </h3>
+        <th:block sec:authorize="isAuthenticated()">
+            <a class="btn btn-outline-success float-right" th:href="@{/logout}">Logout</a>
+        </th:block>
+        <th:block sec:authorize="isAnonymous()">
+            <a class="btn btn-outline-success float-right" th:href="@{/login}">Login</a>
+        </th:block>
+
     </div>
     <hr>
     <div class="d-flex flex-row bd-highlight mb-3">
         <div class="mx-auto" style="width: auto;">
+
+            <th:block sec:authorize="isAuthenticated()">
             <!-- Add 'create new blog' button -->
-            <a th:href="@{/blog/showFormForCreateBlog}" class="btn btn-outline-success d-flex justify-content-center">
+            <a class="btn btn-outline-success d-flex justify-content-center" th:href="@{/blog/showFormForCreateBlog}">
                 Create New Blog
             </a>
             <hr>
+            </th:block>
+            <th:block sec:authorize="isAnonymous()">
+                <a class="btn btn-outline-success d-flex justify-content-center" th:href="@{/login}">
+                    Create New Blog
+                </a>
+                <hr>
+            </th:block>
+
             <p><b>Filter by</b></p>
             <form th:action="@{/blog/filterByDate}">
                 <div class="form-group">
                     <div>
                         <label for="from">Published from: </label>
-                        <input type="datetime-local" class="form-control mb-2 col-auto" id="from" name="from"
-                               th:value="${from}" step=1 required/>
+                        <input class="form-control mb-2 col-auto" id="from" name="from" required
+                               step=1 th:value="${from}" type="datetime-local"/>
                     </div>
                     <div>
                         <label for="to">Published to:</label>
-                        <input type="datetime-local" class="form-control mb-2 col-auto" id="to" name="to"
-                               th:value="${to}" step=1 required/>
+                        <input class="form-control mb-2 col-auto" id="to" name="to" required
+                               step=1 th:value="${to}" type="datetime-local"/>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center">
@@ -50,26 +69,30 @@
             <form th:action="@{/blog/sort}">
                 <div class="form-group">
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="author" name="sortBy" class="custom-control-input"
-                               value="author" th:checked="${(sortBy=='author') ? true: false}"/>
-                        <label class="custom-control-label"for="author">Author</label>
+                        <input class="custom-control-input" id="author" name="sortBy"
+                               th:checked="${(sortBy=='author') ? true: false}"
+                               type="radio" value="author"/>
+                        <label class="custom-control-label" for="author">Author</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="publishedAt" name="sortBy" class="custom-control-input"
-                               value="publishedAt" th:checked="${(sortBy=='publishedAt') ? true: false}"/>
+                        <input class="custom-control-input" id="publishedAt" name="sortBy"
+                               th:checked="${(sortBy=='publishedAt') ? true: false}"
+                               type="radio" value="publishedAt"/>
                         <label class="custom-control-label" for="publishedAt">Published DateTime</label>
                     </div>
                 </div>
                 <hr>
                 <div class="form-group">
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="asc" name="order" class="custom-control-input"
-                               value="asc" th:checked="${(order=='asc') ? true: false}"/>
-                        <label class="custom-control-label"for="asc">Asc</label>
+                        <input class="custom-control-input" id="asc" name="order"
+                               th:checked="${(order=='asc') ? true: false}"
+                               type="radio" value="asc"/>
+                        <label class="custom-control-label" for="asc">Asc</label>
                     </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="dsc" name="order" class="custom-control-input"
-                               value="dsc"  th:checked="${(order=='dsc') ? true: false}">
+                        <input class="custom-control-input" id="dsc" name="order"
+                               th:checked="${(order=='dsc') ? true: false}"
+                               type="radio" value="dsc">
                         <label class="custom-control-label" for="dsc">Dsc</label>
                     </div>
                 </div>
@@ -82,9 +105,9 @@
 
             <form th:action="@{/blog/search}">
                 <div class="d-flex">
-                <input class="form-control me-2" type="search" name="keyword" id="keyword"
-                       th:value="${keyword}" placeholder="Search" aria-label="Search" required />
-                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    <input aria-label="Search" class="form-control me-2" id="keyword" name="keyword"
+                           placeholder="Search" required th:value="${keyword}" type="search"/>
+                    <button class="btn btn-outline-success" type="submit">Search</button>
                 </div>
             </form>
             <br>
@@ -96,32 +119,37 @@
                             <h5 th:text="${tempPosts.title}"/>
                         </a>
 
-                        <p>by <span><a th:text="${tempPosts.author}" th:href="@{/blog/filter(keyword=${tempPosts.author},filterBy=author)}" />,</span>
-                            <span th:text="${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy HH:mm:ss')}" />
+                        <p>by <span><a th:href="@{/blog/filter(keyword=${tempPosts.author},filterBy=author)}"
+                                       th:text="${tempPosts.author}"/>,</span>
+                            <span th:text="${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy HH:mm:ss')}"/>
                         </p>
                         <p th:text="${tempPosts.excerpt}"/>
 
-                        <div  th:if="${tempPosts.tagsList != null}" >
+                        <div th:if="${tempPosts.tagsList != null}">
                             <ul class="list-inline">
                                 <b>Tags:</b>
                                 <th:block th:object="${tempPosts}">
                                     <li class="list-inline-item" th:each="tags : *{tagsList}">
-                                        <a th:text="${tags.name}" th:href="@{/blog/filter(keyword=${tags.name},filterBy=tag)}" />
+                                        <a th:href="@{/blog/filter(keyword=${tags.name},filterBy=tag)}"
+                                           th:text="${tags.name}"/>
                                     </li>
                                 </th:block>
                             </ul>
                         </div>
+                        <th:block sec:authorize="isAuthenticated()">
+                         <th:block th:if="${#authentication.name == tempPosts.author || #authentication.name == 'admin'}">
                         <!-- Add update button/link -->
                         <a th:href="@{/blog/showFormForUpdate(postId=${tempPosts.id})}">
                             Update
                         </a>
 
                         <!-- Add delete button/link -->
-                        <a th:href="@{/blog/delete(postId=${tempPosts.id})}"
-                           onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false">
+                        <a onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false"
+                           th:href="@{/blog/delete(postId=${tempPosts.id})}">
                             Delete
                         </a>
-
+                         </th:block>
+                        </th:block>
                         <!-- Add comment button -->
                         <a th:href="@{/blog/showFormForComment(postId=${tempPosts.id})}">
                             Comment
@@ -135,7 +163,7 @@
                     <li class="page-item" th:if="${!previous}">
                         <a class="btn btn-outline-success" th:href="@{${nextPage}(pageNo=${previousPageNumber})}">Previous</a>
                     </li>
-                    <li class="page-item page-link" th:text="${nextPageNumber}" />
+                    <li class="page-item page-link" th:text="${nextPageNumber}"/>
                     <li class="page-item" th:if="${!next}">
                         <a class="btn btn-outline-success" th:href="@{${nextPage}(pageNo=${nextPageNumber})}">Next</a>
                     </li>
@@ -144,7 +172,7 @@
         </div>
     </div>
     <hr>
-    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success ml-auto">Go Home</a>
+    <a class="btn btn-outline-success ml-auto" th:href="@{/blog/bloglist}">Go Home</a>
     <br><br><br>
 </div>
 </body>

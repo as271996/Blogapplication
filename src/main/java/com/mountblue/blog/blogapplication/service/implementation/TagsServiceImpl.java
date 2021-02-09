@@ -28,9 +28,9 @@ public class TagsServiceImpl implements TagsService {
     public Tags findById(int theId) {
         Optional<Tags> result = theTagsRepository.findById(theId);
         Tags theTags = null;
-        if (result.isPresent()){
+        if (result.isPresent()) {
             theTags = result.get();
-        }else {
+        } else {
             throw new RuntimeException("Did not find tag id - " + theId);
         }
         return theTags;

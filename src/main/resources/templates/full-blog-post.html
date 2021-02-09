@@ -1,47 +1,53 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" rel="stylesheet">
 
     <title>Blog Posts</title>
 </head>
 <body>
 <div class="container" style="width: 100%;">
-    <h3 style="text-align: center" th:text="${post.title}" />
+    <h3 style="text-align: center" th:text="${post.title}"/>
     <hr>
     <div class="mx-auto" style="width: 800px;">
-        <p th:text="${post.content}" />
+        <p th:text="${post.content}"/>
 
-        <p>by <span><a th:text="${post.author}" th:href="@{/blog/filter(keyword=${post.author},filterBy=author)}" />,</span>
-            <span th:text="${#dates.format(post.publishedAt, 'dd-MMM-yyyy HH:mm:ss')}" />
+        <p>by <span><a th:href="@{/blog/filter(keyword=${post.author},filterBy=author)}"
+                       th:text="${post.author}"/>,</span>
+            <span th:text="${#dates.format(post.publishedAt, 'dd-MMM-yyyy HH:mm:ss')}"/>
         </p>
-        <div  th:if="${post.tagsList != null}" >
+        <div th:if="${post.tagsList != null}">
             <ul class="list-inline">
                 <b>Tags:</b>
                 <th:block th:object="${post}">
                     <li class="list-inline-item" th:each="tags : *{tagsList}">
-                        <a th:text="${tags.name}" th:href="@{/blog/filter(keyword=${tags.name},filterBy=tag)}" />
+                        <a th:href="@{/blog/filter(keyword=${tags.name},filterBy=tag)}" th:text="${tags.name}"/>
                     </li>
                 </th:block>
             </ul>
         </div>
 
+        <th:block sec:authorize="isAuthenticated()">
+            <th:block th:if="${#authentication.name == post.author || #authentication.name == 'admin'}">
         <!-- Add update button/link -->
         <a th:href="@{/blog/showFormForUpdate(postId=${post.id})}">
             Update
         </a>
 
         <!-- Add delete button/link -->
-        <a th:href="@{/blog/delete(postId=${post.id})}"
-           onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false">
+        <a onclick="if (!(confirm('Are you sure you want to delete this blog-post?'))) return false"
+           th:href="@{/blog/delete(postId=${post.id})}">
             Delete
         </a>
-
+            </th:block>
+        </th:block>
         <!-- Add comment button -->
         <a th:href="@{/blog/showFormForComment(postId=${post.id})}">
             Comment
@@ -55,23 +61,28 @@
     <table class="table">
         <tr th:each="tempComments : ${post.commentsList}">
             <hr>
-            <p th:text="'by ' + ${tempComments.name} + ', ' + ${#dates.format(tempComments.updatedAt, 'dd-MMM-yyyy HH:mm:ss')}" />
+            <p th:text="'by ' + ${tempComments.name} + ', ' + ${#dates.format(tempComments.updatedAt, 'dd-MMM-yyyy HH:mm:ss')}"/>
             <p th:text="${tempComments.comment}"/>
-            <!-- Add update button/link -->
+
+            <th:block sec:authorize="isAuthenticated()">
+                <th:block th:if="${#authentication.name == post.author || #authentication.name == 'admin'}">
+                <!-- Add update button/link -->
             <a th:href="@{/blog/showFormForUpdateComment(commentId=${tempComments.id})}">
                 Update
             </a>
 
             <!-- Add delete button/link -->
-            <a th:href="@{/blog/deleteComment(commentId=${tempComments.id})}"
-               onclick="if (!(confirm('Are you sure you want to delete this comment?'))) return false">
+            <a onclick="if (!(confirm('Are you sure you want to delete this comment?'))) return false"
+               th:href="@{/blog/deleteComment(commentId=${tempComments.id})}">
                 Delete
             </a>
+                </th:block>
+            </th:block>
         </tr>
     </table>
 
     <hr>
-    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success">Go Home</a>
+    <a class="btn btn-outline-success" th:href="@{/blog/bloglist}">Go Home</a>
     <br><br><br>
 </div>
 </body>
