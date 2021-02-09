@@ -141,7 +141,7 @@ public class BlogApplicationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Comments theComments = new Comments();
         theComments.setPostId(theId);
-        theComments.setName(authentication.getName());
+        if (!authentication.getName().equals("anonymousUser")) theComments.setName(authentication.getName());
         theModel.addAttribute("comments", theComments);
         return "comment-form";
     }

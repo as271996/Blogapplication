@@ -28,7 +28,7 @@
         <input th:field="*{postId}" type="hidden"/>
 
         <input class="form-control mb-4 col-4" placeholder="Your Full Name"
-               th:field="*{name}" type="text" th:readonly="${comments.name != 'anonymousUser' && #authentication.name != 'admin'}">
+               th:field="*{name}" type="text" th:readonly="${comments.name != null && #authentication.name != 'admin'}">
 
         <input class="form-control mb-4 col-4" placeholder="Your Email"
                th:field="*{email}" type="text">
