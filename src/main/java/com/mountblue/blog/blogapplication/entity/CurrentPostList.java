@@ -24,8 +24,8 @@ public class CurrentPostList {
         this.tempCurrentPostsList = tempCurrentPostsList;
     }
 
-    public void add(Posts thePosts){
-        if (tempCurrentPostsList == null){
+    public void add(Posts thePosts) {
+        if (tempCurrentPostsList == null) {
             tempCurrentPostsList = new ArrayList<>();
         }
         tempCurrentPostsList.removeIf(id -> (tempCurrentPostsList.stream().anyMatch(t -> t.getId()
@@ -33,7 +33,7 @@ public class CurrentPostList {
         tempCurrentPostsList.add(thePosts);
     }
 
-    public void delete(int postId){
+    public void delete(int postId) {
         tempCurrentPostsList.removeIf(id -> (tempCurrentPostsList.stream().anyMatch(t -> t.getId() == postId)));
 
     }

@@ -10,7 +10,7 @@ import java.util.List;
 public class Tags {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
@@ -23,11 +23,11 @@ public class Tags {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @ManyToMany(fetch=FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name="post_tags",
-            joinColumns=@JoinColumn(name="tag_id"),
-            inverseJoinColumns=@JoinColumn(name="post_id")
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
     )
     private List<Posts> postsList;
 
@@ -80,8 +80,8 @@ public class Tags {
         this.postsList = postsList;
     }
 
-    public void addPosts(Posts thePosts){
-        if (postsList == null){
+    public void addPosts(Posts thePosts) {
+        if (postsList == null) {
             postsList = new ArrayList<>();
         }
         postsList.add(thePosts);

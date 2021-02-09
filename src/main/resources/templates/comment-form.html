@@ -1,13 +1,15 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" rel="stylesheet">
 
     <title>Comment Form</title>
 </head>
@@ -18,28 +20,28 @@
     <br><br>
     <p class="h4 mb-4">Leave a comment</p>
 
-    <form action="#" th:action="@{/blog/saveComment}"
-          th:object="${comments}" method="POST">
+    <form action="#" method="POST"
+          th:action="@{/blog/saveComment}" th:object="${comments}">
 
         <!-- Add hidden form field to handle update -->
-        <input type="hidden" th:field="*{id}" />
-        <input type="hidden" th:field="*{postId}" />
+        <input th:field="*{id}" type="hidden"/>
+        <input th:field="*{postId}" type="hidden"/>
 
-        <input type="text" th:field="*{name}"
-               class="form-control mb-4 col-4" placeholder="Your Full Name">
+        <input class="form-control mb-4 col-4" placeholder="Your Full Name"
+               th:field="*{name}" type="text" th:readonly="${comments.name != 'anonymousUser' && #authentication.name != 'admin'}">
 
-        <input type="text" th:field="*{email}"
-               class="form-control mb-4 col-4" placeholder="Your Email">
+        <input class="form-control mb-4 col-4" placeholder="Your Email"
+               th:field="*{email}" type="text">
 
-        <textarea th:field="*{comment}"
-                  class="form-control mb-4 col-4" placeholder="Write your comments..."  />
+        <textarea class="form-control mb-4 col-4"
+                  placeholder="Write your comments..." th:field="*{comment}"/>
 
-        <button type="submit" class="btn btn-outline-success col-2">Submit</button>
+        <button class="btn btn-outline-success col-2" type="submit">Submit</button>
 
     </form>
 
     <hr>
-    <a th:href="@{/blog/bloglist}" class="btn btn-outline-success">Go Home</a>
+    <a class="btn btn-outline-success" th:href="@{/blog/bloglist}">Go Home</a>
 
 </div>
 </body>

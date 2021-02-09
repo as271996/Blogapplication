@@ -1,16 +1,20 @@
 package com.mountblue.blog.blogapplication.service.implementation;
 
 import com.mountblue.blog.blogapplication.DAO.PostsRepository;
-import com.mountblue.blog.blogapplication.entity.PostTags;
 import com.mountblue.blog.blogapplication.entity.Posts;
 import com.mountblue.blog.blogapplication.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -32,7 +36,7 @@ public class PostsServiceImpl implements PostsService {
     public Posts findById(int theId) {
         Optional<Posts> result = thePostsRepository.findById(theId);
         Posts thePosts = null;
-        if(result.isPresent()) {
+        if (result.isPresent()) {
             thePosts = result.get();
         } else {
             throw new RuntimeException("Did not find post id - " + theId);
@@ -61,42 +65,42 @@ public class PostsServiceImpl implements PostsService {
         if (keyword == null || keyword.isEmpty()) {
             return tempCurrentList;
         }
-        for (Posts thePost: tempCurrentList) {
+        for (Posts thePost : tempCurrentList) {
             String finalKeyword = keyword;
             if (thePost.getAuthor().toLowerCase().contains(keyword.toLowerCase()) ||
-            thePost.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
-            thePost.getContent().toLowerCase().contains(keyword.toLowerCase()) ||
-            thePost.getTagsList().stream().anyMatch(tag -> tag.getName().toLowerCase()
-                    .contains(finalKeyword.toLowerCase()))){
+                    thePost.getTitle().toLowerCase().contains(keyword.toLowerCase()) ||
+                    thePost.getContent().toLowerCase().contains(keyword.toLowerCase()) ||
+                    thePost.getTagsList().stream().anyMatch(tag -> tag.getName().toLowerCase()
+                            .contains(finalKeyword.toLowerCase()))) {
                 theCurrentSearchList.add(thePost);
             }
         }
         return theCurrentSearchList;
     }
 
-//##########################################################################################################
+    //##########################################################################################################
 //                   SORTING BLOG POST BY AUTHOR/PUBLISHED DATE IN ASCENDING/DESCENDING ORDER
 //##########################################################################################################
     @Override
     public List<Posts> sortPostsList(List<Posts> thePostsList, String sortBy, String direction) {
 
         if ("asc".equals(direction)) {
-            if("author".equals(sortBy)) {
+            if ("author".equals(sortBy)) {
                 thePostsList.sort(Comparator.comparing(Posts::getAuthor));
-            }else{
+            } else {
                 thePostsList.sort(Comparator.comparing(Posts::getPublishedAt));
             }
         } else {
-            if("author".equals(sortBy)) {
+            if ("author".equals(sortBy)) {
                 thePostsList.sort(Comparator.comparing(Posts::getAuthor).reversed());
-            }else{
+            } else {
                 thePostsList.sort(Comparator.comparing(Posts::getPublishedAt).reversed());
             }
         }
         return thePostsList;
     }
 
-//###########################################################################################################
+    //###########################################################################################################
 //                                  FILTERING BY AUTHOR, TAG AND FROM-TO DATE
 //###########################################################################################################
     @Override
@@ -113,14 +117,15 @@ public class PostsServiceImpl implements PostsService {
     public List<Posts> filterByDatePostList(List<Posts> thePostsList, Timestamp from, Timestamp to) {
 
         List<Posts> theFilteredPostList = new ArrayList<>();
-        for (Posts post: thePostsList){
-            if (post.getPublishedAt().after(from) && post.getPublishedAt().before(to)){
+        for (Posts post : thePostsList) {
+            if (post.getPublishedAt().after(from) && post.getPublishedAt().before(to)) {
                 theFilteredPostList.add(post);
             }
         }
         return theFilteredPostList;
     }
-//###########################################################################################################
+
+    //###########################################################################################################
 //                                   DOING PAGINATION ON BLOG POSTS LIST
 //###########################################################################################################
     @Override
@@ -130,25 +135,25 @@ public class PostsServiceImpl implements PostsService {
         return new PageImpl<>(theCurrentPostList.subList(start, end), pageable, theCurrentPostList.size());
     }
 
-    public Model pagingCalculation(Model theModel, int totalNumberOfBlog, int pageNo, int pageSize){
+    public Model pagingCalculation(Model theModel, int totalNumberOfBlog, int pageNo, int pageSize) {
         int currentNumberOfBlog = (pageNo + 1) * pageSize;
-        if ( totalNumberOfBlog > currentNumberOfBlog){
-            if (pageNo > 0 ){
+        if (totalNumberOfBlog > currentNumberOfBlog) {
+            if (pageNo > 0) {
                 theModel.addAttribute("previous", false);
-            }else {
+            } else {
                 theModel.addAttribute("previous", true);
             }
             theModel.addAttribute("next", false);
-        }else if (totalNumberOfBlog <= currentNumberOfBlog) {
-            if (pageNo > 0 ){
+        } else if (totalNumberOfBlog <= currentNumberOfBlog) {
+            if (pageNo > 0) {
                 theModel.addAttribute("previous", false);
-            }else {
+            } else {
                 theModel.addAttribute("previous", true);
             }
             theModel.addAttribute("next", true);
         }
-        theModel.addAttribute("nextPageNumber" , (pageNo + 1));
-        theModel.addAttribute("previousPageNumber" , (pageNo - 1));
+        theModel.addAttribute("nextPageNumber", (pageNo + 1));
+        theModel.addAttribute("previousPageNumber", (pageNo - 1));
         return theModel;
     }
 //###########################################################################################################

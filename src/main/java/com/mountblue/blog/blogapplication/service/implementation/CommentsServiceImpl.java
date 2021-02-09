@@ -28,9 +28,9 @@ public class CommentsServiceImpl implements CommentsService {
     public Comments findById(int theId) {
         Optional<Comments> result = theCommentsRepository.findById(theId);
         Comments theComments = null;
-        if (result.isPresent()){
+        if (result.isPresent()) {
             theComments = result.get();
-        }else {
+        } else {
             throw new RuntimeException("Did not find comment id - " + theId);
         }
         return theComments;

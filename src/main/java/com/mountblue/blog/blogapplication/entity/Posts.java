@@ -1,6 +1,7 @@
 package com.mountblue.blog.blogapplication.entity;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.util.Set;
 public class Posts {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
@@ -45,17 +46,17 @@ public class Posts {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-    @JoinColumn(name="post_id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id", nullable = false)
     private List<Comments> commentsList;
 
-    @ManyToMany(fetch=FetchType.EAGER,
-            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE,
                     CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
-            name="post_tags",
-            joinColumns=@JoinColumn(name="post_id"),
-            inverseJoinColumns=@JoinColumn(name="tag_id")
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tags> tagsList;
 
@@ -117,15 +118,15 @@ public class Posts {
         return publishedAt;
     }
 
+    public void setPublishedAt(Timestamp publishedAt) {
+        this.publishedAt = publishedAt;
+    }
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.sss")
     public LocalDateTime getPublishedDate() {
         if (publishedAt != null)
             return publishedAt.toLocalDateTime();
         return new Timestamp(System.currentTimeMillis()).toLocalDateTime();
-    }
-
-    public void setPublishedAt(Timestamp publishedAt) {
-        this.publishedAt = publishedAt;
     }
 
     public boolean isPublished() {
@@ -143,6 +144,7 @@ public class Posts {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+
     public void setCreatedAt(String createdAt) {
         this.createdAt = Timestamp.valueOf(createdAt);
     }
@@ -181,7 +183,7 @@ public class Posts {
     }
 
     public void add(Comments theComments) {
-        if(commentsList == null) {
+        if (commentsList == null) {
             commentsList = new ArrayList<>();
         }
         commentsList.removeIf(id -> (commentsList.stream().anyMatch(t -> t.getId() == (theComments.getId()))));
