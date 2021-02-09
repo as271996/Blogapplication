@@ -18,7 +18,6 @@
     <br>
     <div class="clearfix">
         <h3 class="float-left">List of Blogs <span sec:authentication="name"/>
-         <p th:text="${#authentication.name}" />
         </h3>
         <th:block sec:authorize="isAuthenticated()">
             <a class="btn btn-outline-success float-right" th:href="@{/logout}">Logout</a>
@@ -29,6 +28,13 @@
 
     </div>
     <hr>
+    <div style="text-align: center;" th:if="${error != null}">
+        <h3 style="color:red;" th:text="${error}" />
+        <a th:href="@{/blog/bloglist}">Refresh Page</a>
+        <hr>
+    </div>
+
+    </th:block>
     <div class="d-flex flex-row bd-highlight mb-3">
         <div class="mx-auto" style="width: auto;">
 
@@ -120,8 +126,9 @@
                         </a>
 
                         <p>by <span><a th:href="@{/blog/filter(keyword=${tempPosts.author},filterBy=author)}"
-                                       th:text="${tempPosts.author}"/>,</span>
-                            <span th:text="${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy HH:mm:ss')}"/>
+                                       th:text="${tempPosts.author}"/> on</span>
+                            <span th:text="${#dates.format(tempPosts.publishedAt, 'dd-MMM-yyyy')} +' at ' +
+                            ${#dates.format(tempPosts.publishedAt, 'HH:mm:ss')}"/>
                         </p>
                         <p th:text="${tempPosts.excerpt}"/>
 

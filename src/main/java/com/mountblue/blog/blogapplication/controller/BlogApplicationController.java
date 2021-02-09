@@ -77,6 +77,7 @@ public class BlogApplicationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Posts posts = new Posts();
         posts.setAuthor(authentication.getName());
+        posts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("create-blog-post.html");
         modelAndView.addObject("posts", posts);
@@ -108,7 +109,9 @@ public class BlogApplicationController {
                                @RequestParam("publishedDate")
                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime publishedDate
     ) {
-        thePosts.setExcerpt(thePosts.getContent());
+        String postContent = thePosts.getContent();
+        thePosts.setExcerpt(postContent.substring(0, (postContent.length() < 200) ? postContent.length() : 200));
+        if (postContent.length() >= 200) thePosts.setExcerpt(thePosts.getExcerpt()+"...");
 
         thePosts.setPublishedAt(Timestamp.valueOf(publishedDate));
 
@@ -117,12 +120,9 @@ public class BlogApplicationController {
         } else {
             thePosts.setPublished(true);
         }
-        if (thePosts.getCreatedAt() == null) {
-            thePosts.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        }
         thePosts.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         thePostsService.save(thePosts);
-        return "redirect:/blog/bloglist";
+        return "redirect:/blog/showFullBlogPost?postId=" + thePosts.getId();
     }
 
     // Add mapping for /delete
@@ -141,6 +141,7 @@ public class BlogApplicationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Comments theComments = new Comments();
         theComments.setPostId(theId);
+        theComments.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         if (!authentication.getName().equals("anonymousUser")) theComments.setName(authentication.getName());
         theModel.addAttribute("comments", theComments);
         return "comment-form";
@@ -160,7 +161,6 @@ public class BlogApplicationController {
     public String saveComment(@ModelAttribute("comments") Comments theComments) {
         int theId = theComments.getPostId();
         Posts thePosts = thePostsService.findById(theId);
-        theComments.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         theComments.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         thePosts.add(theComments);
         thePostsService.save(thePosts);
@@ -187,6 +187,13 @@ public class BlogApplicationController {
                          Model theModel) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         List<Posts> theSearchedList = thePostsService.searchInCurrentList(theCurrentPostList.getTempCurrentPostsList(), keyword);
+
+        if (theSearchedList.isEmpty()){
+            theModel.addAttribute("error","search not found");
+            keyword = null;
+            theSearchedList = thePostsService.findAll();
+        }
+
         theCurrentPostList.setTempCurrentPostsList(theSearchedList);
         Page<Posts> theSearchPostPage = thePostsService.getCurrentPostList(paging, theSearchedList);
 

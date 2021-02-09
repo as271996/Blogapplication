@@ -22,12 +22,12 @@
     <hr>
 
     <p class="h4 mb-4">Save Your Blog</p>
-
     <form action="#" method="POST"
           th:action="@{/blog/save}" th:object="${posts}">
 
         <!-- Add hidden form field to handle update -->
         <input th:field="*{id}" type="hidden"/>
+        <input th:field="*{createdAt}" type="hidden"/>
 
         <input class="form-control mb-4 col-4" placeholder="Your blog title"
                th:field="*{title}" type="text">

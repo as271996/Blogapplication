@@ -25,7 +25,9 @@
 
         <!-- Add hidden form field to handle update -->
         <input th:field="*{id}" type="hidden"/>
+        <input th:field="*{createdAt}" type="hidden"/>
         <input th:field="*{postId}" type="hidden"/>
+
 
         <input class="form-control mb-4 col-4" placeholder="Your Full Name"
                th:field="*{name}" type="text" th:readonly="${comments.name != null && #authentication.name != 'admin'}">

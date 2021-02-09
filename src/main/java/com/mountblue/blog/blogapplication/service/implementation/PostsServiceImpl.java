@@ -27,9 +27,24 @@ public class PostsServiceImpl implements PostsService {
         this.thePostsRepository = thePostsRepository;
     }
 
+    public PostsServiceImpl() {
+
+    }
+
     @Override
     public List<Posts> findAll() {
-        return thePostsRepository.findAll();
+        List<Posts> thePostsList = new ArrayList<>();
+        List<Posts> teamPostsList = thePostsRepository.findAll();
+        for (Posts post: teamPostsList){
+            if (post.isPublished()){
+                thePostsList.add(post);
+            }else if (post.getPublishedAt().before(new Timestamp(System.currentTimeMillis()))){
+                post.setPublished(true);
+                save(post);
+                thePostsList.add(post);
+            }
+        }
+        return thePostsList;
     }
 
     @Override
@@ -59,8 +74,9 @@ public class PostsServiceImpl implements PostsService {
 //##################################################################################################################
     @Override
     public List<Posts> searchInCurrentList(List<Posts> tempCurrentList, String keyword) {
+        PostsServiceImpl thePostsServiceImpl = new PostsServiceImpl();
         List<Posts> theCurrentSearchList = new ArrayList<>();
-        if (tempCurrentList.size() <= 0) tempCurrentList = thePostsRepository.findAll();
+        if (tempCurrentList.size() <= 0) tempCurrentList = thePostsServiceImpl.findAll();
         keyword = keyword.strip();
         if (keyword == null || keyword.isEmpty()) {
             return tempCurrentList;

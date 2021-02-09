@@ -88,6 +88,9 @@ public class Comments {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = Timestamp.valueOf(createdAt);
+    }
 
     public Timestamp getUpdatedAt() {
         return updatedAt;
