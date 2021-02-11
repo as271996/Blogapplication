@@ -18,7 +18,7 @@ public class Comments {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "comment")
+    @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
 
     @Column(name = "post_id", insertable = false, updatable = false)

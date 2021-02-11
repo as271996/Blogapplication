@@ -25,7 +25,7 @@ public class Posts {
     @Column(name = "excerpt")
     private String excerpt;
 
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "author")
