@@ -77,7 +77,8 @@ public class PostsServiceImpl implements PostsService {
         PostsServiceImpl thePostsServiceImpl = new PostsServiceImpl();
         List<Posts> theCurrentSearchList = new ArrayList<>();
         if (tempCurrentList.size() <= 0) tempCurrentList = thePostsServiceImpl.findAll();
-        keyword = keyword.strip();
+        /*keyword = keyword.strip();*/
+        keyword = keyword.trim();
        /* keyword = keyword.replaceAll("^\\s+", "");
         keyword = keyword.replaceAll("^\\\\s+$", "");*/
 
